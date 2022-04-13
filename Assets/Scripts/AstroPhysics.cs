@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class Physics : MonoBehaviour
+public class AstroPhysics : MonoBehaviour
 {
-    [SerializeField] float thisMass;
+    [SerializeField] public float thisMass;
     [SerializeField] Vector3 thisVelUnity;
     [SerializeField] float thisDist;
     [SerializeField] bool Active;
@@ -13,7 +13,7 @@ public class Physics : MonoBehaviour
 
     float GravConstUnity;
 
-    float ThisSolarMass;
+    public float ThisSolarMass;
 
     float Acceleration;
 
@@ -44,8 +44,8 @@ public class Physics : MonoBehaviour
         if (Active)
         {
             AccelerationInDirection = new Vector3(0, 0, 0);
-            Physics[] PhysicsObjects = (Physics[])GameObject.FindObjectsOfType(typeof(Physics));
-            List<Physics> PhysObjs = PhysicsObjects.ToList();
+            AstroPhysics[] PhysicsObjects = (AstroPhysics[])GameObject.FindObjectsOfType(typeof(Physics));
+            List<AstroPhysics> PhysObjs = PhysicsObjects.ToList();
             for (int i = 0; i < PhysObjs.Count; i++)
             {
                 if (!PhysObjs[i].Active)
@@ -77,7 +77,7 @@ public class Physics : MonoBehaviour
 
     float AccelerationFromGravity(GameObject other)
     {
-        return ((GravConstUnity * other.GetComponent<Physics>().ThisSolarMass) /
+        return ((GravConstUnity * other.GetComponent<AstroPhysics>().ThisSolarMass) /
                         (thisDist * thisDist));
         /* 
          * find the force acted apon it by the other object using f =G * M * m / r * r
