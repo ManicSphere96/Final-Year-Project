@@ -1,0 +1,7 @@
+﻿  RandomSolarSystem.cpp
+D:\OneDrive\Documents\University Work\Year 3\Final Year Project\FYP\RandomSolarSystem\RandomSolarSystem\PlanetClass.h(25,61): warning C4018: '<': signed/unsigned mismatch
+D:\OneDrive\Documents\University Work\Year 3\Final Year Project\FYP\RandomSolarSystem\RandomSolarSystem\RandomSolarSystem.cpp(89,27): warning C4018: '<': signed/unsigned mismatch
+D:\OneDrive\Documents\University Work\Year 3\Final Year Project\FYP\RandomSolarSystem\RandomSolarSystem\RandomSolarSystem.cpp(107,41): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\OneDrive\Documents\University Work\Year 3\Final Year Project\FYP\RandomSolarSystem\RandomSolarSystem\RandomSolarSystem.cpp(113,38): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\OneDrive\Documents\University Work\Year 3\Final Year Project\FYP\RandomSolarSystem\RandomSolarSystem\RandomSolarSystem.cpp(129,27): warning C4018: '<': signed/unsigned mismatch
+  RandomSolarSystem.vcxproj -> D:\OneDrive\Documents\University Work\Year 3\Final Year Project\FYP\RandomSolarSystem\Debug\RandomSolarSystem.exe

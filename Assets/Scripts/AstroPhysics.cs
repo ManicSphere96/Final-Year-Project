@@ -5,13 +5,13 @@ using System.Linq;
 
 public class AstroPhysics : MonoBehaviour
 {
-    [SerializeField] public float thisMass;
+    [SerializeField] public float ThisRealMass;
     [SerializeField] Vector3 thisVelUnity;
     [SerializeField] float thisDist;
-    [SerializeField] bool Active;
+    [SerializeField] public bool Active = true;
 
 
-    float GravConstUnity;
+    public float GravConstUnity = 40.48f;
 
     public float ThisSolarMass;
 
@@ -22,7 +22,7 @@ public class AstroPhysics : MonoBehaviour
     Vector3 NormDirection;
     Vector3 AccelerationInDirection;
 
-    bool Binarystarsystem = false;
+    //bool Binarystarsystem = false;
 
     //Measurements in masses in solar units, distances in parsecs, velocities in km/s
     // 1 parsec = 206,000 au = 3.086e16 m
@@ -33,8 +33,8 @@ public class AstroPhysics : MonoBehaviour
     void Start()
     {
         solarMassSize = 1.98847e30f;
-        GravConstUnity = 40.48f;
-        ThisSolarMass = (thisMass / solarMassSize);
+        
+        ThisSolarMass = (ThisRealMass / solarMassSize);
     }
 
     // Update is called once per frame
@@ -44,7 +44,7 @@ public class AstroPhysics : MonoBehaviour
         if (Active)
         {
             AccelerationInDirection = new Vector3(0, 0, 0);
-            AstroPhysics[] PhysicsObjects = (AstroPhysics[])GameObject.FindObjectsOfType(typeof(Physics));
+            AstroPhysics[] PhysicsObjects = (AstroPhysics[])FindObjectsOfType<AstroPhysics>();
             List<AstroPhysics> PhysObjs = PhysicsObjects.ToList();
             for (int i = 0; i < PhysObjs.Count; i++)
             {
@@ -82,5 +82,18 @@ public class AstroPhysics : MonoBehaviour
         /* 
          * find the force acted apon it by the other object using f =G * M * m / r * r
          */
+    }
+    public float GetDistance(AstroPhysics other)
+    {
+        float Dist = Vector3.Distance(this.transform.position, other.transform.position);
+        if(Dist < 0)
+        {
+            Dist = -Dist;
+        }
+        return Dist;
+    }
+    public void AddVelocity(Vector3 vel)
+    {
+        thisVelUnity = thisVelUnity + vel;
     }
 }
