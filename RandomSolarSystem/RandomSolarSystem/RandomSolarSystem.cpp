@@ -21,6 +21,7 @@ int main()
     int NumOfRockPlanets;
     int NumOfGasPlanets;
     std::vector <CelestialBody> Planets;
+    std::vector<CelestialBody> Moons;
     double MinRock = 3.3e23;
     double MaxRock = 15e24;
     double MinGas = 15e24;
@@ -68,6 +69,9 @@ int main()
             NumOfGasPlanets = NumOfRockPlanets;
         }
 
+        Planets.clear();
+        Moons.clear();
+
         for (int i = 0; i < NumberOfPlanets; i++)
         {
             Planets.push_back(CelestialBody(i)); //generating the list of planets
@@ -81,8 +85,12 @@ int main()
             }
             
         }
+        
 
         std::default_random_engine RandomEngine(RandomDevice());
+        std::uniform_real_distribution<double> Distunif(0.008, 0.2);
+        double DistRand = Distunif(RandomEngine);
+
         std::uniform_real_distribution<double> sununif(0.57, 1.64);
         Sun.SetMass(sununif(RandomEngine)); //Giving our sun object a Mass
 
@@ -114,22 +122,100 @@ int main()
                 //roughly 10 percent of data in exoplanet.eu_catalog suggested that the Orbital inclination was random.
             }
 
-            // For distance all ecamples of solar systems larger than 5 planets followed an exponential curve almost exactly 
-            std::uniform_real_distribution<double> Distunif(0.008, 0.2);
-            Planets[i].SetDistance((Distunif(RandomEngine) * exp(0.7 * (i + (int)1)))); // this models the exponential curve.
+            // For distance all examples of solar systems larger than 5 planets followed an exponential curve almost exactly 
+            
+            Planets[i].SetDistance((DistRand * exp(0.7 * (i + 1.0)))); // this models the exponential curve.
 
             Planets[i].SetInitVel(StableVelocity((Sun.GetMass()* 1.989e30f),Planets[i].GetDistance()));
-            
-
-           
 
            // std::cout << "Planet # " << Planets[i].GetNumber() << " Planet Mass " << Planets[i].GetMass() << " Planet orbital inclination " << Planets[i].GetOI() << " Planet Distance from sun " << Planets[i].GetDistance()<<" The planets orbital velocity "<< Planets[i].GetInitVelocity() <<std::endl;
         }
-        std::cout << "Planet # " << "  Mass " << " orbital inclination " << " Distance from sun " << " orbital velocity "<< std::endl;
+
+        //ranges for moon generation are based off data gathered 
         for (int i = 0; i < Planets.size(); i++)
         {
-            std::cout << Planets[i].GetNumber()<< "     "<< Planets[i].GetMass() << "      " << Planets[i].GetOI() << "        " << Planets[i].GetDistance() << "            " << Planets[i].GetInitVelocity() << std::endl;
+            if (i < NumOfRockPlanets)
+            {
+                //of rocky planets on our ss half have moons 
+                std::uniform_real_distribution<double> Chanceunif(0.0, 100.0);
+                if (Chanceunif(RandomEngine) < 50.0) // 50%
+                {
+                    std::uniform_real_distribution<double> moonsrange(1, 3);
+                    int nummoons = moonsrange(RandomEngine);
+                    Planets[i].SetNumMoons(nummoons);
+                }
+                else
+                {
+                    Planets[i].SetNumMoons(0);
+                }
+            }
+            else
+            {
+                std::uniform_real_distribution<double> moonsrange(1, 90);
+                int nummoons = moonsrange(RandomEngine);
+                Planets[i].SetNumMoons(nummoons);
+            }
+            
         }
+        for (int j = 0; j < Planets.size(); j++)
+        {
+            if (Planets[j].GetNumMoons() != 0)
+            {
+                for (int i = 0; i < Planets[j].GetNumMoons(); i++)
+                {
+                    int currentmoon = Moons.size();
+                    Moons.push_back(CelestialBody(i+1));
+                    Moons[currentmoon].SetNum(j);
+                    std::uniform_real_distribution<double> MassRange(7.3e10, 1.48e25);
+                    Moons[currentmoon].SetMass(MassRange(RandomEngine));
+
+                    std::uniform_real_distribution<double> DistRange(4.8e7, 5.00e10);
+                    Moons[currentmoon].SetDistance(DistRange(RandomEngine));
+
+                    std::uniform_real_distribution<double> Chanceunif(0.0, 100.0);
+                    if (Chanceunif(RandomEngine) < 90.0) // 90%
+                    {
+                        std::uniform_real_distribution<double> unif(0, 1.0);
+                        Moons[currentmoon].SetOI(norminv(unif(RandomEngine), mu, sigma));
+                        //creating an orbital inclination based off the normal distribution of the data given by exoplanet.eu_catalog modeling the moons similar to a solar system
+                    }
+                    else// 10%
+                    {
+                        std::uniform_real_distribution<double> unif(0.0, 180.0);
+                        Moons[currentmoon].SetOI(unif(RandomEngine));
+                        //roughly 10 percent of data in exoplanet.eu_catalog suggested that the Orbital inclination was random.
+                    }
+                    // sets an initial velocity to give the moon a satelite orbit around the planet.
+                    Moons[currentmoon].SetInitVel(StableVelocity(Planets[j].GetMass(), Moons[currentmoon].GetDistance()));
+                  
+                }
+            }
+        }
+        int currentmoons = 0;
+
+
+
+        // output of the function
+
+        std::cout << "Sun" << "     Mass " << std::endl;
+            std::cout << "     " << Sun.GetMass() << std::endl;
+        for (int i = 0; i < Planets.size(); i++)
+        {
+            
+
+            std::cout << "Planet # " << "  Mass " << " orbital inclination " << " Distance from sun " << " orbital velocity " << "   #Of moons" << std::endl;
+            std::cout << Planets[i].GetNumber()<< "     "<< Planets[i].GetMass() << "      " << Planets[i].GetOI() << "        " << Planets[i].GetDistance() << "            " << Planets[i].GetInitVelocity() << "       " << Planets[i].GetNumMoons()<<std::endl;
+            if (Planets[i].GetNumMoons() != 0)
+            {
+                std::cout << "Moon # " <<  "  Mass " << " orbital inclination " << " Distance from sun " << " orbital velocity " << std::endl;
+            }
+            for (int j = currentmoons; j < currentmoons + Planets[i].GetNumMoons(); j++)
+            {
+                std::cout << Moons[j].GetNumber() << "     "  << Moons[j].GetMass() << "      " << Moons[j].GetOI() << "        " << Moons[j].GetDistance() << "            " << Moons[j].GetInitVelocity() << std::endl;
+            }
+            currentmoons += Planets[i].GetNumMoons();
+        }
+        
     }
 }
 

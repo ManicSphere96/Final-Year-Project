@@ -10,6 +10,7 @@ public class AstroPhysics : MonoBehaviour
     [SerializeField] float thisDist;
     [SerializeField] public bool Active = true;
 
+    public float OrbitalInclination;
 
     public float GravConstUnity = 40.48f;
 
@@ -64,14 +65,14 @@ public class AstroPhysics : MonoBehaviour
                     //print(AffectedByGravity(PhysObjs[i].gameObject));
                     Vector3 Direction = this.transform.position - PhysObjs[i].GetComponent<Transform>().position;
                     NormDirection = Vector3.Normalize(Direction);
-                    AccelerationInDirection = -Acceleration * NormDirection;
+                    AccelerationInDirection += -Acceleration * NormDirection;
                 }
             }
             //current velocity is equal to the previous velocity 
-            thisVelUnity = thisVelUnity + (AccelerationInDirection * Time.deltaTime);
+            thisVelUnity += (AccelerationInDirection * Time.deltaTime);
             //                  f=ma f/m = a                a=km/s/s a*t = v = km/s 
             // the new position = the old position + the change due to the current velocity
-            this.transform.position = this.transform.position + (thisVelUnity * Time.deltaTime);
+            this.transform.position += (thisVelUnity * Time.deltaTime);
         }
     }
 
@@ -85,15 +86,19 @@ public class AstroPhysics : MonoBehaviour
     }
     public float GetDistance(AstroPhysics other)
     {
-        float Dist = Vector3.Distance(this.transform.position, other.transform.position);
-        if(Dist < 0)
-        {
-            Dist = -Dist;
-        }
-        return Dist;
+        return Vector3.Distance(this.transform.position, other.transform.position);
     }
     public void AddVelocity(Vector3 vel)
     {
         thisVelUnity = thisVelUnity + vel;
     }
+    public Vector3 GetVelocity()
+    {
+        return thisVelUnity;
+    }
+    public void SetDistance (float dist)
+    {
+        this.transform.position.Set(0,0,dist);
+    }
+   
 }
