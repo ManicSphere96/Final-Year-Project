@@ -177,7 +177,7 @@ int main()
                     {
                         std::uniform_real_distribution<double> unif(0, 1.0);
                         Moons[currentmoon].SetOI(norminv(unif(RandomEngine), mu, sigma));
-                        //creating an orbital inclination based off the normal distribution of the data given by exoplanet.eu_catalog modeling the moons similar to a solar system
+                        //creating an orbital inclination based off the normal distribution of the data given by exoplanet.eu_catalog odeling the moons similar to a solar system
                     }
                     else// 10%
                     {

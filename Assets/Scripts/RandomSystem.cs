@@ -7,7 +7,11 @@ public class RandomSystem : MonoBehaviour
     public GameObject SunPrefab;
     public GameObject RockyPlanetPrefab;
     public GameObject GasPlanetPrefab;
+    public GameObject MoonPrefab;
+    public GameObject Parent;
     public float GravConstUnity = 40.48f;
+    float RealScaleConstant = 100;
+    float OuterScaleConstant = 10;
     void Start()
     {
 
@@ -81,26 +85,27 @@ public class RandomSystem : MonoBehaviour
     return sigma* normsinv(p) + mu;
     }
 
-    float StableVelocity(float SunMass, float Distance)
+    float StableVelocity(float CenterMass, float Distance)
     {
         // this gives avelocity to obtain a circular orbit for the object in question. 
-        return Mathf.Sqrt((40.48f * SunMass) / Distance);
+        return Mathf.Sqrt((40.48f * CenterMass) / Distance);
     }
     public void CreateRandomSystem()
     {
+        Random.InitState(1);
         float Solarmass;
-        Solarmass = Random.Range(0.57f, 1.64f);
+        Solarmass =  Random.Range(0.57f, 1.64f);
         float RealMass = Solarmass * 1.989e30f;
         double mu = 89.18;
         double sigma = 0.89377;
-        GameObject TheSun = Instantiate(SunPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
+        GameObject TheSun = Instantiate(SunPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity,Parent.transform);
         AstroPhysics SunPrefabPhys = TheSun.GetComponent<AstroPhysics>();
         SunPrefabPhys.ThisRealMass = RealMass;
         SunPrefabPhys.ThisSolarMass = Solarmass;
 
-        int NumberOfPlanets = Random.Range(3, 9);
+        int NumberOfPlanets =Random.Range(3, 9);
         int NumOfRockPlanets;
-        int NumOfGasPlanets;
+        int NumOfGasPlanets ;
         if (NumberOfPlanets % 2 != 0)
         {
             NumberOfPlanets--;
@@ -120,38 +125,101 @@ public class RandomSystem : MonoBehaviour
         float RandomDistanceStartPoint = Random.Range(0.08f, 0.15f);
         for (int i = 0; i < Planets.Length; i++)
         {
+
             Distances[i] = RandomDistanceStartPoint * (Mathf.Exp(0.7f * (i + 1.0f)))*10;
         }
         for (int i = 0; i < Planets.Length; i++)
         {
-            
+            AstroPhysics PlanetAP;
             if (i < NumOfRockPlanets)
             {
-                Planets[i] = Instantiate(RockyPlanetPrefab, new Vector3(0, 0, Distances[i]), Quaternion.identity);
-                AstroPhysics PlanetAP = Planets[i].GetComponent<AstroPhysics>();
-                PlanetAP.ThisRealMass  = Random.Range(3.3e23f, 15e24f);
+                Planets[i] = Instantiate(RockyPlanetPrefab, new Vector3(0, 0, Distances[i]), Quaternion.identity, Parent.transform);
+                PlanetAP = Planets[i].GetComponent<AstroPhysics>();
+                PlanetAP.ThisRealMass = Random.Range(0.03e+24f, 2467e+24f);
                 PlanetAP.ThisSolarMass = PlanetAP.ThisRealMass / 1.989e+30f;
+                PlanetAP.RealDiameter = Random.Range(5.0e+6f,15.0e+6f);
+                PlanetAP.UnityDiameter = PlanetAP.RealDistToUnity(PlanetAP.RealDiameter);
+                Planets[i].transform.localScale = new Vector3 (PlanetAP.UnityDiameter * RealScaleConstant, PlanetAP.UnityDiameter * RealScaleConstant, PlanetAP.UnityDiameter * RealScaleConstant);
+                
+                if ((Random.Range(0.0f, 1.0f) > 0.5f)&&(i!=0))
+                {
+                    Planets[i].GetComponent<Planet>().NumOfMoons =  Random.Range(1, 3);
+                }
+                else
+                {
+                    Planets[i].GetComponent<Planet>().NumOfMoons = 0;
+                }
             }
             else
             {
-                Planets[i] = Instantiate(GasPlanetPrefab, new Vector3(0, 0, Distances[i]), Quaternion.identity);
-                AstroPhysics PlanetAP = Planets[i].GetComponent<AstroPhysics>();
-                PlanetAP.ThisRealMass = Random.Range(15e24f , 2467e24f);
+                Planets[i] = Instantiate(GasPlanetPrefab, new Vector3(0, 0, Distances[i]), Quaternion.identity, Parent.transform);
+                PlanetAP = Planets[i].GetComponent<AstroPhysics>();
+                PlanetAP.ThisRealMass = Random.Range(15e+24f, 2467e+24f);
                 PlanetAP.ThisSolarMass = PlanetAP.ThisRealMass / 1.989e+30f;
+                PlanetAP.RealDiameter = Random.Range(50e+6f, 200e+6f);
+                PlanetAP.UnityDiameter = PlanetAP.RealDistToUnity(PlanetAP.RealDiameter);
+                Planets[i].transform.localScale = new Vector3(PlanetAP.UnityDiameter * RealScaleConstant, PlanetAP.UnityDiameter * RealScaleConstant, PlanetAP.UnityDiameter * RealScaleConstant);
+                Planets[i].gameObject.transform.Find("Outer").transform.localScale = new Vector3(Planets[i].transform.localScale.x * OuterScaleConstant, Planets[i].transform.localScale.y * OuterScaleConstant, Planets[i].transform.localScale.z * OuterScaleConstant);
+                Planets[i].GetComponent<Planet>().NumOfMoons = Random.Range(3, 6);
             }
-
+            Planets[i].GetComponent<Planet>().PlanetNum = i;
             if   (Random.Range(0,10) !=1)
             {
                 float Randnumb = (float)Random.Range(0.0f, 1.0f);
                 //Debug.Log(Randnumb);
-               Planets[i].GetComponent<AstroPhysics>().OrbitalInclination = (float)norminv(Randnumb, mu, sigma);
+                PlanetAP.OrbitalInclination = (float)norminv(Randnumb, mu, sigma);
             }
             else
             {
-                Planets[i].GetComponent<AstroPhysics>().OrbitalInclination = (float)Random.Range(0, 180);
+                PlanetAP.OrbitalInclination =  (float)Random.Range(0, 180);
             }
-            float initVelocity = StableVelocity(TheSun.GetComponent<AstroPhysics>().ThisSolarMass, Planets[i].GetComponent<AstroPhysics>().GetDistance(TheSun.GetComponent<AstroPhysics>()));
-            Planets[i].GetComponent<AstroPhysics>().AddVelocity(Quaternion.AngleAxis(Planets[i].GetComponent<AstroPhysics>().OrbitalInclination, new Vector3(0, 0, 1))* new Vector3(0, initVelocity, 0));
+            float initVelocity = StableVelocity(TheSun.GetComponent<AstroPhysics>().ThisSolarMass, PlanetAP.GetDistance(TheSun.GetComponent<AstroPhysics>()));
+            Quaternion Planetangleaxis = Quaternion.AngleAxis(PlanetAP.OrbitalInclination, new Vector3(0, 0, 1));
+            PlanetAP.AddVelocity(Planetangleaxis * new Vector3(0, initVelocity, 0));
+            float RandomMoonDistanceStartPoint = Random.Range(0.001f, 0.0012f);
+            
+
+            GameObject[] Moons = new GameObject[Planets[i].GetComponent<Planet>().NumOfMoons];
+            for (int j = 0; j <Moons.Length; j++)
+            {
+               
+                float Dist = RandomMoonDistanceStartPoint * (Mathf.Exp(0.7f * (j+1 + 1.0f))) ;
+                if ((Dist / Distances[i]) > 0.025f)
+                {
+                    break;
+                }
+                Moons[j] = Instantiate(MoonPrefab, new Vector3(0, 0, (Planets[i].transform.position.z+Dist)), Quaternion.identity, Parent.transform);
+                AstroPhysics MoonAP = Moons[j].GetComponent<AstroPhysics>();
+                if (i < NumOfRockPlanets)
+                {
+                    MoonAP.ThisRealMass = Random.Range(7.3e10f, PlanetAP.ThisRealMass / 1000.0f);
+                    
+                }
+                else
+                {
+                    MoonAP.ThisRealMass = Random.Range(7.3e10f, 1.48e25f);
+                }
+                    
+                MoonAP.ThisSolarMass = MoonAP.ThisRealMass / 1.989e+30f;
+                if (Random.Range(0, 10) >5)
+                {
+                    MoonAP.OrbitalInclination = (float)norminv(Random.Range(0.0f, 1.0f), mu, sigma);
+                }
+                else
+                {
+                    MoonAP.OrbitalInclination = (float)Random.Range(0, 180);
+                }
+                float InitMoonVelocity = StableVelocity(PlanetAP.ThisSolarMass, Dist);
+                Quaternion moonangleaxis = Quaternion.AngleAxis(MoonAP.OrbitalInclination, new Vector3(0, 0, 1));
+
+                MoonAP.AddVelocity((moonangleaxis * new Vector3(0, InitMoonVelocity, 0)) + (PlanetAP.GetVelocity() * ((Planets[i].transform.position.z + Dist)/ Planets[i].transform.position.z))); 
+
+
+
+            }
+
         }
+        
+
     }
 }

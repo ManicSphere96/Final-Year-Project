@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7898951707332694428}
   m_Layer: 0
   m_Name: RockyPlanet
-  m_TagString: Untagged
+  m_TagString: AstroPhysicsObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3000886783220663013}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -111,7 +111,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ThisRealMass: 0
   thisVelUnity: {x: 0, y: 0, z: 0}
-  thisDist: 0
   Active: 1
   OrbitalInclination: 0
   GravConstUnity: 40.48
@@ -128,6 +127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18c32970e5bfaf4ea8b7fbb0a14a2c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NumOfMoons: 0
+  PlanetNum: 0
   BufferNumber: 500
   ResourceANumber: 100
   ResourceBNumber: 100

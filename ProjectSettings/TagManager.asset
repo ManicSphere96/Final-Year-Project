@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - SolarObject
+  - AstroPhysicsObj
   layers:
   - Default
   - TransparentFX

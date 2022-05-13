@@ -5,13 +5,15 @@ using UnityEngine;
 
 public class Planet : MonoBehaviour
 {
-
+    public int NumOfMoons = 0;
+    public int PlanetNum;
     public int BufferNumber = 500;
     public int ResourceANumber;
     public int ResourceBNumber;
     public int ResourceCNumber;
     public int ResourceDNumber;
     public bool Collecting;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +31,7 @@ public class Planet : MonoBehaviour
         {
             BufferNumber = 500;
         }
+        
         
     }
     void RemoveResources()
@@ -58,5 +61,5 @@ public class Planet : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-
+    
 }

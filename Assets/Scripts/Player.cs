@@ -19,23 +19,14 @@ public class Player : MonoBehaviour
     {
         Rotate();
         Move();
-        AstroPhysics[] PhysicsObjects = (AstroPhysics[])FindObjectsOfType<AstroPhysics>();
-        List<AstroPhysics> PhysObjs = PhysicsObjects.ToList();
-        for (int i = 0; i < PhysObjs.Count; i++)
-        {
-            if (!PhysObjs[i].Active)
-            {
-                PhysObjs.RemoveAt(i);
-                i--;
-            }
-        }
-        Debug.Log(PhysObjs.Count);
+        List<AstroPhysics> PhysObjs = this.gameObject.GetComponentInParent<APParent>().APObjs;
+
         for (int i = 0; i < PhysObjs.Count; i++)
         {
             if ((this.gameObject.GetComponent<AstroPhysics>() != PhysObjs[i])&& (PhysObjs[i].gameObject.GetComponent<Planet>() != null))
             {
                 float distance = PhysObjs[i].GetDistance(this.GetComponent<AstroPhysics>());
-                Debug.Log(distance);
+                
                 if (distance < 2)
                 {
                     PhysObjs[i].GetComponent<Planet>().Collecting = true;
@@ -44,6 +35,13 @@ public class Player : MonoBehaviour
                 {
                     PhysObjs[i].GetComponent<Planet>().Collecting = false;
                 }
+            }
+            if (PhysObjs[i].gameObject.transform.Find("Outer") != null)
+            {
+                MeshRenderer OuterMR = PhysObjs[i].gameObject.transform.Find("Outer").GetComponent<MeshRenderer>();
+                Color MyColour = OuterMR.material.color;
+                MyColour.a = FadinggObj(PhysObjs[i].GetDistance(this.GetComponent<AstroPhysics>()), OuterMR.gameObject.transform.localScale.x);
+                OuterMR.material.SetColor("_Color", MyColour);
             }
         }
     }
@@ -82,5 +80,13 @@ public class Player : MonoBehaviour
             this.GetComponent<AstroPhysics>().AddVelocity(-this.GetComponent<AstroPhysics>().GetVelocity());
         }
        
+    }
+    float FadinggObj(float Dist, float Scale)
+    {
+        Scale = Scale / 2;
+        float x = Mathf.Clamp(Dist, Scale + 5.0f, Scale + 10.0f) - (Scale + 5.0f);
+        x = x / 5;
+        x = x * x * (3 - 2 * x);
+        return x;
     }
 }
