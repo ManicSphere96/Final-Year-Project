@@ -190,7 +190,7 @@ MonoBehaviour:
   Active: 1
   ID: 0
   OrbitalInclination: 0
-  GravConstUnity: 0.004048
+  GravConstUnity: 40.48
   ThisSolarMass: 0
   DistanceFromPlanet: 0
   RealDiameter: 0

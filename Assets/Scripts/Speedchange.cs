@@ -5,11 +5,14 @@ using UnityEngine.UI;
 
 public class Speedchange : MonoBehaviour
 {
-    // Start is called before the first frame update
     [SerializeField] int buttonpressnum = 0;
     public GameObject PauseMenu;
 
     // Update is called once per frame
+    private void Awake()
+    {
+        Application.targetFrameRate = 60;
+    }
     void Update()
     {
         if (buttonpressnum > 3)

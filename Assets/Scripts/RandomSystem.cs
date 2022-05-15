@@ -9,9 +9,10 @@ public class RandomSystem : MonoBehaviour
     public GameObject GasPlanetPrefab;
     public GameObject MoonPrefab;
     public GameObject Parent;
-    public float GravConstUnity = 0.004048f;
-    float RealScaleConstant = 1;
-    float RockyRealScaleConstant = 1;
+    //public float GravConstUnity = 00040.48f;
+    float GravConstUnity = 0.004048f;
+    float RealScaleConstant = 10;
+    float RockyRealScaleConstant = 100;
     float OuterScaleConstant = 10;
     double GravityRatioConstant = 5;
     void Start()
@@ -21,7 +22,7 @@ public class RandomSystem : MonoBehaviour
 
     void Update()
     {
-
+        
     }
 
     double normsinv(double p)
@@ -199,10 +200,8 @@ public class RandomSystem : MonoBehaviour
                 Dist = Random.Range(PlanetAP.RealDiameter, (float)MaxMoonDist);
                 Dist =PlanetAP.RealDistToUnity(Dist);
 
-                Moons[j] = Instantiate(MoonPrefab, new Vector3(0, 0, 0), Quaternion.identity, Parent.transform);
+                Moons[j] = Instantiate(MoonPrefab, new Vector3(0, 0, (Planets[i].transform.position.z + Dist)), Quaternion.identity, Parent.transform);
                 AstroPhysics MoonAP = Moons[j].GetComponent<AstroPhysics>();
-                MoonAP.RealDistToUnity(Dist);
-                Moons[j].transform.position = new Vector3(0, 0, (Planets[i].transform.position.z + Dist));
 
 
                 if (i < NumOfRockPlanets)
@@ -226,8 +225,9 @@ public class RandomSystem : MonoBehaviour
                 }
                 float InitMoonVelocity = StableVelocity(PlanetAP.ThisSolarMass, Dist);
                 Quaternion moonangleaxis = Quaternion.AngleAxis(MoonAP.OrbitalInclination, new Vector3(0, 0, 1));
-
-                MoonAP.AddVelocity((moonangleaxis * new Vector3(0, InitMoonVelocity, 0)) + (PlanetAP.GetVelocity() * ((Planets[i].transform.position.z + Dist)/ Planets[i].transform.position.z)));
+                // Parent Planet velocity + the angular velocity of the moon at its position
+                Vector3 MoonVelocity = PlanetAP.GetVelocity() * ((Planets[i].transform.position.z + Dist) / Planets[i].transform.position.z);
+                MoonAP.AddVelocity((moonangleaxis * new Vector3(0, InitMoonVelocity, 0)) + MoonVelocity);
 
                 MoonAP.ID = PlanetAP.ID + j + 1;
                 MoonAP.RealDiameter = 0.1666f * Mathf.Pow(MoonAP.ThisRealMass, 0.3237f);
