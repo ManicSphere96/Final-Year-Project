@@ -112,5 +112,7 @@ MonoBehaviour:
   thisVelUnity: {x: 0, y: 0, z: 0}
   Active: 1
   OrbitalInclination: 0
-  GravConstUnity: 40.48
+  GravConstUnity: 0.004048
   ThisSolarMass: 0
+  RealDiameter: 0
+  UnityDiameter: 0

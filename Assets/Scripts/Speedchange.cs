@@ -25,20 +25,20 @@ public class Speedchange : MonoBehaviour
             switch (buttonpressnum)
             {
                 case 0:
-                    Time.timeScale = 0.01f;
-                    GameObject.Find("Game speed").GetComponentInChildren<Text>().text = "0.25x";
-                    break;
-                case 1:
-                    Time.timeScale = 0.1f;
+                    Time.timeScale = 1f;
                     GameObject.Find("Game speed").GetComponentInChildren<Text>().text = "1x";
                     break;
+                case 1:
+                    Time.timeScale = 5f;
+                    GameObject.Find("Game speed").GetComponentInChildren<Text>().text = "5x";
+                    break;
                 case 2:
-                    Time.timeScale = 0.5f;
+                    Time.timeScale = 10f;
                     GameObject.Find("Game speed").GetComponentInChildren<Text>().text = "10x";
                     break;
                 case 3:
-                    Time.timeScale = 1f;
-                    GameObject.Find("Game speed").GetComponentInChildren<Text>().text = "50x";
+                    Time.timeScale = 25f;
+                    GameObject.Find("Game speed").GetComponentInChildren<Text>().text = "25x";
                     break;
 
             }
