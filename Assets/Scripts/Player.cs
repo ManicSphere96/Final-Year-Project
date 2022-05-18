@@ -10,10 +10,12 @@ public class Player : MonoBehaviour
     public float velocity;
     float PlayerAngleX;
     float PlayerAngleY;
-    public float ScalarVelForward;
-    public float ScalarVelRight;
-    
+    public float FastScalarVelForward;
+    public float FastScalarVelRight;
+    public float SlowScalarVelForward;
+    public float SlowScalarVelRight;
 
+    
     // Update is called once per frame
     void Update()
     {
@@ -25,7 +27,7 @@ public class Player : MonoBehaviour
         {
             if ((this.gameObject.GetComponent<AstroPhysics>() != PhysObjs[i])&& (PhysObjs[i].gameObject.GetComponent<Planet>() != null))
             {
-                float distance = PhysObjs[i].GetDistance(this.GetComponent<AstroPhysics>());
+                float distance = PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>());
                 
                 if (distance < 2)
                 {
@@ -40,8 +42,14 @@ public class Player : MonoBehaviour
             {
                 MeshRenderer OuterMR = PhysObjs[i].gameObject.transform.Find("Outer").GetComponent<MeshRenderer>();
                 Color MyColour = OuterMR.material.color;
-                MyColour.a = FadinggObj(PhysObjs[i].GetDistance(this.GetComponent<AstroPhysics>()), OuterMR.gameObject.transform.localScale.x);
+                MyColour.a = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), (PhysObjs[i].UnityDiameter *OuterMR.gameObject.transform.localScale.x)/2, ((PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x )/ 2 )+10.0f);
+                /*if(MyColour.a !=1)
+                {
+                    MyColour.a= SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), OuterMR.gameObject.transform.localScale.x / 2, (OuterMR.gameObject.transform.localScale.x / 2) + 10.0f);
+                    OuterMR.material.SetColor("_Color", MyColour);
+                }*/
                 OuterMR.material.SetColor("_Color", MyColour);
+                
             }
         }
     }
@@ -56,36 +64,61 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
         { 
-            this.GetComponent<AstroPhysics>().AddVelocity(ScalarVelForward * PlayerTransform.forward);
+            this.GetComponent<AstroPhysics>().AddVelocity(SlowScalarVelForward * PlayerTransform.forward);
         }
         //Moves Player Back
         if (Input.GetKey(KeyCode.S))
         {
-            this.GetComponent<AstroPhysics>().AddVelocity(-ScalarVelForward * PlayerTransform.forward);
+            this.GetComponent<AstroPhysics>().AddVelocity(-SlowScalarVelForward * PlayerTransform.forward);
         }
             
         //Moves Player strafe Right
         if (Input.GetKey(KeyCode.A))
         {
-            this.GetComponent<AstroPhysics>().AddVelocity(-ScalarVelRight * PlayerTransform.right);
+            this.GetComponent<AstroPhysics>().AddVelocity(-SlowScalarVelRight * PlayerTransform.right);
         }
             
         //Moves Player strafe Left
         if (Input.GetKey(KeyCode.D))
         {
-            this.GetComponent<AstroPhysics>().AddVelocity(ScalarVelRight * PlayerTransform.right);
+            this.GetComponent<AstroPhysics>().AddVelocity(SlowScalarVelRight * PlayerTransform.right);
         }
         if (Input.GetKey(KeyCode.Space))
         {
             this.GetComponent<AstroPhysics>().AddVelocity(-this.GetComponent<AstroPhysics>().GetVelocity());
         }
-       
+
+
+        if ((Input.GetKey(KeyCode.W)) && (Input.GetKey(KeyCode.LeftShift)))
+        {
+
+            this.GetComponent<AstroPhysics>().AddVelocity(FastScalarVelForward * PlayerTransform.forward);
+        }
+        //Moves Player Back
+        if ((Input.GetKey(KeyCode.S)) && (Input.GetKey(KeyCode.LeftShift)))
+        {
+            this.GetComponent<AstroPhysics>().AddVelocity(-FastScalarVelForward * PlayerTransform.forward);
+        }
+
+        //Moves Player strafe Right
+        if ((Input.GetKey(KeyCode.A)) && (Input.GetKey(KeyCode.LeftShift)))
+        {
+            this.GetComponent<AstroPhysics>().AddVelocity(-FastScalarVelRight * PlayerTransform.right);
+        }
+
+        //Moves Player strafe Left
+        if ((Input.GetKey(KeyCode.D)) && (Input.GetKey(KeyCode.LeftShift)))
+        {
+            this.GetComponent<AstroPhysics>().AddVelocity(FastScalarVelRight * PlayerTransform.right);
+        }
+        
+
     }
-    float FadinggObj(float Dist, float Scale)
+    float SmoothScale(float Dist, float MinDist, float MaxDist)
     {
-        Scale = Scale / 2;
-        float x = Mathf.Clamp(Dist, Scale + 5.0f, Scale + 10.0f) - (Scale + 5.0f);
-        x = x / 5;
+        
+        float x = Mathf.Clamp(Dist, MinDist, MaxDist) - (MinDist);
+        x = x / (MaxDist-MinDist);
         x = x * x * (3 - 2 * x);
         return x;
     }

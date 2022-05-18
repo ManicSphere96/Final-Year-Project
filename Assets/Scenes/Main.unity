@@ -376,8 +376,10 @@ MonoBehaviour:
   PlayerTransform: {fileID: 615975956}
   LookSpeed: 250
   velocity: 0
-  ScalarVelForward: 0.25
-  ScalarVelRight: 0.25
+  FastScalarVelForward: 1
+  FastScalarVelRight: 1
+  SlowScalarVelForward: 0.001
+  SlowScalarVelRight: 0.001
 --- !u!114 &615975958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,10 +394,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ThisRealMass: 0
   thisVelUnity: {x: 0, y: 0, z: 0}
-  Active: 1
+  Active: 0
+  ID: 100000000
   OrbitalInclination: 0
-  GravConstUnity: 0.004048
   ThisSolarMass: 0
+  DistanceFromPlanet: 0
   RealDiameter: 0
   UnityDiameter: 0
 --- !u!1 &705507993
@@ -780,7 +783,6 @@ MonoBehaviour:
   GasPlanetPrefab: {fileID: 6059705901486919949, guid: c54b232ac54ec694c873d978a316a4c0, type: 3}
   MoonPrefab: {fileID: 3086883953260777102, guid: 55290a802f189f94e8e42eec84e77571, type: 3}
   Parent: {fileID: 1756017580}
-  GravConstUnity: 40.48
 --- !u!114 &1302677319
 MonoBehaviour:
   m_ObjectHideFlags: 0

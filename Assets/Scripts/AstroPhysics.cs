@@ -11,8 +11,8 @@ public class AstroPhysics : MonoBehaviour
     public int ID;
     public float OrbitalInclination;
 
-    //public float GravConstUnity = 00040.48f;
-    float GravConstUnity = 0.004048f;
+    //public float GravConstUnityA = 00040.48f;
+    float GravConstUnityA = 0.004048f;
 
     public float ThisSolarMass;
     public float DistanceFromPlanet;
@@ -31,11 +31,11 @@ public class AstroPhysics : MonoBehaviour
     
     Vector3 NormDirection;
     Vector3 AccelerationInDirection;
-    
-    [SerializeField] Vector3d thisVelUnityDouble;
+    Vector3d thisVelUnityDouble;
     Vector3d NormDirectionDouble;
     Vector3d AccelerationInDirectionDouble;
     double AccelerationUnityDouble;
+
 
     //Measurements in masses in solar units, distances in parsecs, velocities in km/s
     // 1 parsec = 206,000 au = 3.086e16 m
@@ -54,54 +54,60 @@ public class AstroPhysics : MonoBehaviour
     {
 
         
-            List<AstroPhysics> PhysObjs = this.gameObject.GetComponentInParent<APParent>().APObjs;
-            if ((Active) && (PhysObjs != null))
-            {
-                AccelerationInDirection = new Vector3(0, 0, 0);
+        List<AstroPhysics> PhysObjs = this.gameObject.GetComponentInParent<APParent>().APObjs;
+        if ((Active) && (PhysObjs != null))
+        {
+            AccelerationInDirection = new Vector3(0, 0, 0);
+            AccelerationInDirectionDouble = new Vector3d(0, 0, 0);
 
-                for (int i = 0; i < PhysObjs.Count; i++)
+            for (int i = 0; i < PhysObjs.Count; i++)
+            {
+                if (this != PhysObjs[i])
                 {
-                    if (this != PhysObjs[i])
-                    {
-#if false
-                        AstroPhysics other = PhysObjs[i];
-                        double DistanceU = Vector3d.Distance(new Vector3d(other.GetComponent<Transform>().position), new Vector3d(this.transform.position));
-                        //force acting on current Gravitational object from given gravitational object
-                        double Neumarator = (double)GravConstUnity * (double)other.ThisSolarMass;
-                        double Denominator = DistanceU * DistanceU;
-                        AccelerationUnityDouble = Neumarator / Denominator;
-                        //print(AffectedByGravity(PhysObjs[i].gameObject));
-                        Vector3d Direction = new Vector3d(this.transform.position) - new Vector3d(PhysObjs[i].GetComponent<Transform>().position);
-                        NormDirectionDouble = Vector3d.Normalize(Direction);
-                        AccelerationInDirectionDouble += -AccelerationUnityDouble * NormDirectionDouble;
+#if flase
+                    AstroPhysics other = PhysObjs[i];
+                    double DistanceU = Vector3d.Distance(new Vector3d(other.GetComponent<Transform>().position), new Vector3d(this.transform.position));
+                    //force acting on current Gravitational object from given gravitational object
+                    double Neumarator = (double)GravConstUnityA * (double)other.ThisSolarMass;
+                    double Denominator = DistanceU * DistanceU;
+                    AccelerationUnityDouble = Neumarator / Denominator;
+                    //print(AffectedByGravity(PhysObjs[i].gameObject));
+                    Vector3d Direction = new Vector3d(this.transform.position) - new Vector3d(PhysObjs[i].GetComponent<Transform>().position);
+                    NormDirectionDouble = Vector3d.Normalize(Direction);
+                    AccelerationInDirectionDouble += -AccelerationUnityDouble * NormDirectionDouble;
 #else
 
-                        AstroPhysics other = PhysObjs[i];
-                        double DistanceU = Vector3d.Distance(new Vector3d(other.GetComponent<Transform>().position), new Vector3d(this.transform.position));
-                        //force acting on current Gravitational object from given gravitational object
-                        double Neumarator = (double)GravConstUnity * (double)other.ThisSolarMass;
-                        double Denominator = DistanceU * DistanceU;
-                        AccelerationUnityDouble = Neumarator / Denominator;
-                        //print(AffectedByGravity(PhysObjs[i].gameObject));
-                        Vector3d Direction = new Vector3d(this.transform.position) - new Vector3d(PhysObjs[i].GetComponent<Transform>().position);
-                        NormDirectionDouble = Vector3d.Normalize(Direction);
-                        AccelerationInDirectionDouble += -AccelerationUnityDouble * NormDirectionDouble;
-                        //Debug.Log("ObjectID = ," + this.ID + ",  other ID = ," + other.ID + ", Acceleration = ," + AccelerationUnityDouble);
-                        /*float DistanceSQU = (PhysObjs[i].GetComponent<Transform>().position-this.transform.position).sqrMagnitude;
-                        //force acting on current Gravitational object from given gravitational object
-                        AccelerationUnity = AccelerationFromGravity(PhysObjs[i], DistanceSQU);
-                        //print(AffectedByGravity(PhysObjs[i].gameObject));
-                        AccelerationInDirection += -AccelerationUnity * (this.transform.position - PhysObjs[i].GetComponent<Transform>().position).normalized;*/
+                    AstroPhysics other = PhysObjs[i];
+                    double DistanceU = (new Vector3d(other.GetComponent<Transform>().position)- new Vector3d(this.transform.position)).sqrMagnitude;
+                    //force acting on current Gravitational object from given gravitational object
+                    double Neumarator = (double)GravConstUnityA * (double)other.ThisSolarMass;
+                    double Denominator = DistanceU;
+                    AccelerationUnityDouble = Mathd.Abs(Neumarator / Denominator);
+                    //print(AffectedByGravity(PhysObjs[i].gameObject));
+                    Vector3d diffPositionDouble = new Vector3d(this.transform.position) - new Vector3d(PhysObjs[i].GetComponent<Transform>().position);
+                    AccelerationInDirectionDouble += -AccelerationUnityDouble * diffPositionDouble.normalized;
+                    //Debug.Log("ObjectID = ," + this.ID + ",  other ID = ," + other.ID + ", Acceleration = ," + AccelerationUnityDouble);
+                    float DistanceSQU = (PhysObjs[i].GetComponent<Transform>().position-this.transform.position).sqrMagnitude;
+                    //force acting on current Gravitational object from given gravitational object
+                    AccelerationUnity = AccelerationFromGravity(PhysObjs[i], DistanceSQU);
+                    //print(AffectedByGravity(PhysObjs[i].gameObject));
+                    Vector3 diffPosition = this.transform.position - PhysObjs[i].GetComponent<Transform>().position;
+                    AccelerationInDirection += -AccelerationUnity * diffPosition.normalized;
 #endif
-                    }
                 }
-                //current velocity is equal to the previous velocity 
-                thisVelUnityDouble += (AccelerationInDirectionDouble * (double)Time.smoothDeltaTime);
-                //                  f=ma f/m = a                a=km/s/s a*t = v = km/s 
-                // the new position = the old position + the change due to the current velocity
-                Vector3d AmountMovedInDouble = (thisVelUnityDouble * (double)Time.smoothDeltaTime);
-                this.transform.position += new Vector3((float)AmountMovedInDouble.x, (float)AmountMovedInDouble.y, (float)AmountMovedInDouble.z);
-        } 
+            }
+            //current velocity is equal to the previous velocity 
+            thisVelUnity += (AccelerationInDirection * Time.smoothDeltaTime);
+            //                  f=ma f/m = a                a=km/s/s a*t = v = km/s 
+            // the new position = the old position + the change due to the current velocity    
+            Vector3 NewPosition = this.transform.position + (thisVelUnity * Time.smoothDeltaTime);
+
+
+            thisVelUnityDouble += (AccelerationInDirectionDouble * (double)Time.smoothDeltaTime);
+            Vector3d NewPositionDouble = new Vector3d(this.transform.position) + (thisVelUnityDouble * (double) Time.smoothDeltaTime); ;
+            this.transform.position = new Vector3((float)NewPositionDouble.x, (float)NewPositionDouble.y, (float)NewPositionDouble.z);
+            //this.transform.position = new Vector3((float)NewPosition.x, (float)NewPosition.y, (float)NewPosition.z);
+        }
     }
     
 
@@ -111,14 +117,14 @@ public class AstroPhysics : MonoBehaviour
 
 
 
-        return ((GravConstUnity * other.ThisSolarMass) /
+        return ((GravConstUnityA * other.ThisSolarMass) /
                         (DistanceSQ));
         /* 
          * find the force acted apon it by the other object using f =G * M * m / r * r
          * to return acceleration we can cancel m out so we only require the other objects mass.
          */
     }
-    public float GetDistance(AstroPhysics other)
+    public float GetDistanceUnity(AstroPhysics other)
     {
         return Vector3.Distance(this.transform.position, other.transform.position);
     }
