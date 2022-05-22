@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class Planet : MonoBehaviour
@@ -13,6 +14,7 @@ public class Planet : MonoBehaviour
     public int ResourceCNumber;
     public int ResourceDNumber;
     public bool Collecting;
+    
    
     // Start is called before the first frame update
     void Start()
@@ -61,5 +63,17 @@ public class Planet : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-    
+    public Vector3 StableOrbitVector(AstroPhysics PlayerAP, float DistUnity)
+    {
+        Vector3 A = PlayerAP.GetVelocityUnity();
+        Vector3 n = - (PlayerAP.transform.position -this.gameObject.transform.position).normalized;
+
+        PlayerAP.StableVelocity(this.GetComponent<AstroPhysics>().ThisSolarMass, DistUnity);
+
+        float Magnitude = PlayerAP.StableVelocity(this.GetComponent<AstroPhysics>().ThisSolarMass, DistUnity); //  ((PlayerAP.transform.position.magnitude) / transform.position.magnitude));
+        Vector3 TargetVel = (GetComponent<AstroPhysics>().GetVelocityUnity() * ((PlayerAP.transform.position.magnitude) / transform.position.magnitude))  + (A - (Vector3.Dot(A, n) * n)).normalized * Magnitude ;
+        Vector3 DiffInVel = TargetVel - PlayerAP.GetVelocityUnity();
+        return (TargetVel);
+
+    }
 }

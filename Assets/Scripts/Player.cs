@@ -6,6 +6,9 @@ using System.Linq;
 public class Player : MonoBehaviour
 {
     public Transform PlayerTransform;
+    public AstroPhysics PlayerAP;
+    Camera PlayerCam;
+    bool LookAtPlanet = false;
     public float LookSpeed;
     public float velocity;
     float PlayerAngleX;
@@ -15,39 +18,54 @@ public class Player : MonoBehaviour
     public float SlowScalarVelForward;
     public float SlowScalarVelRight;
 
-    
+    void Start()
+    {
+        PlayerAP = GetComponent<AstroPhysics>();
+    }
     // Update is called once per frame
     void Update()
     {
         Rotate();
         Move();
-        List<AstroPhysics> PhysObjs = this.gameObject.GetComponentInParent<APParent>().APObjs;
-
+        List<AstroPhysics> PhysObjs = FindObjectOfType<APParent>().APObjs;
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            LookAtPlanet = !LookAtPlanet;
+        }
         for (int i = 0; i < PhysObjs.Count; i++)
         {
-            if ((this.gameObject.GetComponent<AstroPhysics>() != PhysObjs[i])&& (PhysObjs[i].gameObject.GetComponent<Planet>() != null))
+            if ((PlayerAP != PhysObjs[i])&& (PhysObjs[i].gameObject.GetComponent<Planet>() != null))
             {
-                float distance = PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>());
+                float distance = PhysObjs[i].GetDistanceUnity(PlayerAP);
                 
                 if (distance < 2)
                 {
                     PhysObjs[i].GetComponent<Planet>().Collecting = true;
+                    
+                    
+                    if (LookAtPlanet)
+                    {
+                        this.transform.LookAt(PhysObjs[i].gameObject.transform);
+                    }
+                    
+                    if (Input.GetKeyDown(KeyCode.LeftControl))
+                    {
+                        Vector3 NewVel = PhysObjs[i].GetComponent<Planet>().StableOrbitVector(PlayerAP, distance);
+                        PlayerAP.SetVelocity(NewVel*Time.deltaTime);
+                    }
                 }
                 else
                 {
                     PhysObjs[i].GetComponent<Planet>().Collecting = false;
                 }
+                
             }
+            
             if (PhysObjs[i].gameObject.transform.Find("Outer") != null)
             {
                 MeshRenderer OuterMR = PhysObjs[i].gameObject.transform.Find("Outer").GetComponent<MeshRenderer>();
                 Color MyColour = OuterMR.material.color;
                 MyColour.a = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), (PhysObjs[i].UnityDiameter *OuterMR.gameObject.transform.localScale.x)/2, ((PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x )/ 2 )+10.0f);
-                /*if(MyColour.a !=1)
-                {
-                    MyColour.a= SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), OuterMR.gameObject.transform.localScale.x / 2, (OuterMR.gameObject.transform.localScale.x / 2) + 10.0f);
-                    OuterMR.material.SetColor("_Color", MyColour);
-                }*/
                 OuterMR.material.SetColor("_Color", MyColour);
                 
             }
@@ -85,7 +103,7 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.Space))
         {
-            this.GetComponent<AstroPhysics>().AddVelocity(-this.GetComponent<AstroPhysics>().GetVelocity());
+            this.GetComponent<AstroPhysics>().AddVelocity(-this.GetComponent<AstroPhysics>().GetVelocityUnity());
         }
 
 
@@ -122,4 +140,5 @@ public class Player : MonoBehaviour
         x = x * x * (3 - 2 * x);
         return x;
     }
+
 }

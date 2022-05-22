@@ -5,6 +5,8 @@ using UnityEngine;
 public class PauseMenu : MonoBehaviour
 {
     public GameObject PanelToActivate;
+    public GameObject CameraToActivate;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +19,7 @@ public class PauseMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) == true)
         {
            PanelToActivate.SetActive(!PanelToActivate.activeInHierarchy);
-          
+           CameraToActivate.SetActive(!PanelToActivate.activeInHierarchy);
         }
     }
 }
