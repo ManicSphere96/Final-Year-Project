@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     public float FastScalarVelRight;
     public float SlowScalarVelForward;
     public float SlowScalarVelRight;
+    public int LookTimer;
 
     void Start()
     {
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             LookAtPlanet = !LookAtPlanet;
+            LookTimer = 1000;
         }
         for (int i = 0; i < PhysObjs.Count; i++)
         {
@@ -45,10 +47,12 @@ public class Player : MonoBehaviour
                     
                     if (LookAtPlanet)
                     {
-                        this.transform.LookAt(PhysObjs[i].gameObject.transform);
+                        LookTimer--;
+                        Quaternion LookRotation = Quaternion.LookRotation(PhysObjs[i].transform.position - this.transform.position);
+                        transform.rotation = Quaternion.Slerp(transform.rotation , LookRotation ,Time.deltaTime);
                     }
                     
-                    if (Input.GetKeyDown(KeyCode.LeftControl))
+                    if (Input.GetKey(KeyCode.LeftControl))
                     {
                         Vector3 NewVel = PhysObjs[i].GetComponent<Planet>().StableOrbitVector(PlayerAP, distance);
                         PlayerAP.SetVelocity(NewVel*Time.deltaTime);

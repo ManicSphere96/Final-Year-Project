@@ -117,10 +117,9 @@ public class AstroPhysics : MonoBehaviour
         {
             GameObject other = collision.gameObject;
 
+            
 
-
-            Vector3 CollisionPoint = collision.GetContact(0).point;
-            Vector3 NormalForPoint = collision.GetContact(0).normal;
+            
             //this = this
 
             float m1, m2, x1, x2;

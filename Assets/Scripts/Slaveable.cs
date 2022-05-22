@@ -14,7 +14,10 @@ public class Slaveable : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (transform.parent != null)
+        {
+            this.GetComponent<AstroPhysics>().SetVelocity(transform.parent.gameObject.GetComponent<AstroPhysics>().GetVelocityUnity());
+        }
     }
     public void SlaveObject()
     {
