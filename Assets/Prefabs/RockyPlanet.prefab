@@ -221,3 +221,4 @@ MonoBehaviour:
   ResourceCNumber: 100
   ResourceDNumber: 100
   Collecting: 0
+  AsteroidPrefab: {fileID: 8716633929729820376, guid: ec1b343c3d7f4994c86bb7ffe0b5651f, type: 3}

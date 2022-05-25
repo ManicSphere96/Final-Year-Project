@@ -135,11 +135,12 @@ MonoBehaviour:
   NumOfMoons: 0
   PlanetNum: 0
   BufferNumber: 500
-  ResourceANumber: 1000000
-  ResourceBNumber: 1000000
-  ResourceCNumber: 1000000
-  ResourceDNumber: 1000000
+  ResourceANumber: 12
+  ResourceBNumber: 0
+  ResourceCNumber: 0
+  ResourceDNumber: 0
   Collecting: 0
+  AsteroidPrefab: {fileID: 8716633929729820376, guid: ec1b343c3d7f4994c86bb7ffe0b5651f, type: 3}
 --- !u!1 &8623659494140142789
 GameObject:
   m_ObjectHideFlags: 0

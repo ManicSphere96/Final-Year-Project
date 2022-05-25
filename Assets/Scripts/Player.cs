@@ -7,17 +7,18 @@ public class Player : MonoBehaviour
 {
     public Transform PlayerTransform;
     public AstroPhysics PlayerAP;
-    Camera PlayerCam;
-    bool LookAtPlanet = false;
+    public ParticleSystem PlayerPS;
+    public bool LookAtPlanet = false;
+    public bool AttemptingToCollect = false;
+    public int ParticleSystemActive = 0;
     public float LookSpeed;
     public float velocity;
-    float PlayerAngleX;
-    float PlayerAngleY;
     public float FastScalarVelForward;
     public float FastScalarVelRight;
     public float SlowScalarVelForward;
     public float SlowScalarVelRight;
-    public int LookTimer;
+    public bool LookAtPlanetLookAt = false;
+    public bool OnlyOnce = true;
 
     void Start()
     {
@@ -32,50 +33,140 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             LookAtPlanet = !LookAtPlanet;
-            LookTimer = 1000;
+            if (!OnlyOnce)
+            { 
+                OnlyOnce = true; 
+            }
+            if (LookAtPlanetLookAt)
+            {
+                LookAtPlanetLookAt = false;
+            }
         }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            AttemptingToCollect = !AttemptingToCollect;
+            
+        }
+        if (ParticleSystemActive == 0)
+        {
+            PlayerPS.gameObject.SetActive(false);
+        }
+        
         for (int i = 0; i < PhysObjs.Count; i++)
         {
             if ((PlayerAP != PhysObjs[i])&& (PhysObjs[i].gameObject.GetComponent<Planet>() != null))
             {
+                if (PhysObjs[i].gameObject.transform.Find("Outer") != null)
+                {
+                    MeshRenderer OuterMR = PhysObjs[i].gameObject.transform.Find("Outer").GetComponent<MeshRenderer>();
+                    Color MyColour = OuterMR.material.color;
+                    MyColour.a = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), 
+                                            (PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x) / 2, 
+                                            ((PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x) / 2) + 10.0f);
+                    OuterMR.material.SetColor("_Color", MyColour);
+                     float TimeChangeFloat = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), 
+                                                         PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x / 4, 
+                                                         PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x / 2);
+                    if ((TimeChangeFloat != 1.0f)&& (TimeChangeFloat<0.9f))
+                    {
+                        FindObjectOfType<TimeChange>().RateOfTime = TimeChangeFloat + 0.1f;
+                    }
+                
+                }
+                
+                
                 float distance = PhysObjs[i].GetDistanceUnity(PlayerAP);
                 
                 if (distance < 2)
                 {
-                    PhysObjs[i].GetComponent<Planet>().Collecting = true;
-                    
+                    if (AttemptingToCollect)
+                    {
+                        if (PhysObjs[i].GetComponent<Slaveable>() != null)
+                        {
+                            if(!PhysObjs[i].GetComponent<Slaveable>().GetIsSlaved())
+                            {
+                                PhysObjs[i].GetComponent<Planet>().Collecting = true;
+                                ParticleSystem.MainModule newMain = PlayerPS.main;
+                                newMain.startColor = new Color(1, 0, 0, 1);
+                                PlayerPS.gameObject.SetActive(true);
+                                ParticleSystemActive = PhysObjs[i].ID;
+                            }
+                        }
+                        else
+                        {
+                            PhysObjs[i].GetComponent<Planet>().Collecting = true;
+                            ParticleSystem.MainModule newMain = PlayerPS.main;
+                            newMain.startColor = new Color(1, 0, 0, 1);
+                            ParticleSystem.EmissionModule newemission = PlayerPS.emission;
+                            newemission.rateOverTime =  5  /FindObjectOfType<TimeChange>().RateOfTime;
+                            PlayerPS.gameObject.SetActive(true);
+                            ParticleSystemActive = PhysObjs[i].ID;
+                        }
+                    }
+                    else
+                    {
+                        PhysObjs[i].GetComponent<Planet>().Collecting = false;
+                        if ((ParticleSystemActive == PhysObjs[i].ID))
+                        {
+                            PlayerPS.gameObject.SetActive(false);
+                            ParticleSystemActive = 0;
+                        }
+                    }
                     
                     if (LookAtPlanet)
                     {
-                        LookTimer--;
-                        Quaternion LookRotation = Quaternion.LookRotation(PhysObjs[i].transform.position - this.transform.position);
-                        transform.rotation = Quaternion.Slerp(transform.rotation , LookRotation ,Time.deltaTime);
+                        if (LookAtPlanetLookAt)
+                        {
+                            this.transform.LookAt(PhysObjs[i].transform);
+                        }
+                        else
+                        {
+                            Quaternion LookRotation = Quaternion.LookRotation(PhysObjs[i].transform.position - this.transform.position);
+                            transform.rotation = Quaternion.Slerp(transform.rotation, LookRotation, Time.deltaTime * 50.0f);
+                            StartCoroutine(WaitForLookAt());
+                        }
                     }
                     
                     if (Input.GetKey(KeyCode.LeftControl))
                     {
                         Vector3 NewVel = PhysObjs[i].GetComponent<Planet>().StableOrbitVector(PlayerAP, distance);
-                        PlayerAP.SetVelocity(NewVel*Time.deltaTime);
+                        PlayerAP.SetVelocity(NewVel);
                     }
                 }
                 else
                 {
                     PhysObjs[i].GetComponent<Planet>().Collecting = false;
+                    if ((ParticleSystemActive == PhysObjs[i].ID)&&(distance>2))
+                    {
+                        PlayerPS.gameObject.SetActive(false);
+                        ParticleSystemActive = 0 ;
+                    }
                 }
                 
             }
             
-            if (PhysObjs[i].gameObject.transform.Find("Outer") != null)
+            if (PhysObjs[i].gameObject.name == "Asteroid(Clone)")
             {
-                MeshRenderer OuterMR = PhysObjs[i].gameObject.transform.Find("Outer").GetComponent<MeshRenderer>();
-                Color MyColour = OuterMR.material.color;
-                MyColour.a = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), (PhysObjs[i].UnityDiameter *OuterMR.gameObject.transform.localScale.x)/2, ((PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x )/ 2 )+10.0f);
-                OuterMR.material.SetColor("_Color", MyColour);
-                
+                float TimeChangeFloat = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()),1,2);
+                if ((TimeChangeFloat != 1.0f) && (TimeChangeFloat < 0.9f))
+                {
+                    FindObjectOfType<TimeChange>().RateOfTime = TimeChangeFloat + 0.1f;
+                }
             }
         }
     }
-
+    
+    IEnumerator  WaitForLookAt()
+    {
+        if (OnlyOnce)
+        {
+            OnlyOnce = false;
+            yield return new WaitForSeconds(1);
+            LookAtPlanetLookAt = true;
+            
+        }
+        yield return null;
+    }
     
     void Rotate()
     {

@@ -29,10 +29,12 @@ public class Slaveable : MonoBehaviour
         if (slave)
         {
             this.transform.parent = FindObjectOfType<Player>().transform;
+            this.GetComponent<AstroPhysics>().Active = false;
         }
         if (!slave)
         {
             this.transform.parent = null;
+            this.GetComponent<AstroPhysics>().Active = false;
         }
     }
     public bool GetIsSlaved()
