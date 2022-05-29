@@ -8,7 +8,8 @@ public class Planet : MonoBehaviour
 {
     public int NumOfMoons = 0;
     public int PlanetNum;
-    public int BufferNumber = 500;
+    public int BufferNumberInit = 500;
+    public int BufferNumber ;
     public int ResourceANumber;
     public int ResourceBNumber;
     public int ResourceCNumber;
@@ -32,7 +33,7 @@ public class Planet : MonoBehaviour
         }
         else
         {
-            BufferNumber = 500;
+            BufferNumber = BufferNumberInit;
         }
         
         
@@ -69,9 +70,9 @@ public class Planet : MonoBehaviour
         Vector3 A = PlayerAP.GetVelocityUnity();
         Vector3 n = - (PlayerAP.transform.position -this.gameObject.transform.position).normalized;
 
-        PlayerAP.StableVelocity(this.GetComponent<AstroPhysics>().ThisSolarMass, DistUnity);
+        PlayerAP.StableOrbitVelocity(this.GetComponent<AstroPhysics>().ThisSolarMass, DistUnity);
 
-        float Magnitude = PlayerAP.StableVelocity(this.GetComponent<AstroPhysics>().ThisSolarMass, DistUnity); //  ((PlayerAP.transform.position.magnitude) / transform.position.magnitude));
+        float Magnitude = PlayerAP.StableOrbitVelocity(this.GetComponent<AstroPhysics>().ThisSolarMass, DistUnity); //  ((PlayerAP.transform.position.magnitude) / transform.position.magnitude));
         Vector3 TargetVel = (GetComponent<AstroPhysics>().GetVelocityUnity() * ((PlayerAP.transform.position.magnitude) / transform.position.magnitude))  + (A - (Vector3.Dot(A, n) * n)).normalized * Magnitude ;
         return (TargetVel);
 
@@ -79,30 +80,27 @@ public class Planet : MonoBehaviour
     public void DestroyPlanet()
     {
         AstroPhysics PlanetAP = GetComponent<AstroPhysics>();
-        int NumberOfAsteroids = 3;//Random.Range(1, 4);
-        for (int i = 0; i < NumberOfAsteroids; i++)
+        MeshRenderer PlanetMR = this.GetComponent<MeshRenderer>();
+        int NumberOfAsteroids = 4;//Random.Range(1, 4);
+        GameObject CurrentAsteroid = Instantiate(AsteroidPrefab, this.transform.position, Quaternion.identity);
+        foreach (Transform child in CurrentAsteroid.transform)
         {
-            GameObject CurrentAsteroid = Instantiate(AsteroidPrefab, this.transform.position +new Vector3(0,0,i*0.0001f), Quaternion.identity);
-            AstroPhysics CurrentAsteroidAP = CurrentAsteroid.GetComponent<AstroPhysics>();
             
-            Vector3 A = this.GetComponent<AstroPhysics>().GetVelocityUnity();
-            Vector3 n = new Vector3(Random.Range(0.0f, 1.0f),
-                                    Random.Range(0.0f, 1.0f),
-                                    Random.Range(0.0f, 1.0f));
-            Vector3 AdditionalMovement = (A - (Vector3.Dot(A, n) * n)).normalized;
-            
-            
-            CurrentAsteroidAP.SetVelocity(this.GetComponent<AstroPhysics>().GetVelocityUnity() + AdditionalMovement/10);
-            //CurrentAsteroidAP.ThisRealMass = PlanetAP.ThisRealMass / NumberOfAsteroids;
-            //CurrentAsteroidAP.ThisSolarMass = PlanetAP.ThisSolarMass / NumberOfAsteroids;
-            CurrentAsteroidAP.ID = PlanetAP.ID * 10 + i;
-            CurrentAsteroidAP.UnityDiameter = PlanetAP.UnityDiameter / NumberOfAsteroids;
-            CurrentAsteroidAP.RealDiameter = PlanetAP.RealDiameter / NumberOfAsteroids;
-            CurrentAsteroid.transform.localScale = new Vector3(CurrentAsteroidAP.UnityDiameter/4,
-                                                               CurrentAsteroidAP.UnityDiameter/4,
-                                                               CurrentAsteroidAP.UnityDiameter/4);
+            AstroPhysics ChildAsteroidAP = child.GetComponent<AstroPhysics>();
 
+            Vector3 AdditionalMovement =-(CurrentAsteroid.transform.position - ChildAsteroidAP.GetComponent<Transform>().position).normalized;
 
+            ChildAsteroidAP.SetVelocity(this.GetComponent<AstroPhysics>().GetVelocityUnity() + AdditionalMovement/10);
+            //ChildAsteroidAP.ThisRealMass = PlanetAP.ThisRealMass / 4;
+            //ChildAsteroidAP.ThisSolarMass = PlanetAP.ThisSolarMass / 4;
+            ChildAsteroidAP.ID = PlanetAP.ID * 10 + NumberOfAsteroids;
+            ChildAsteroidAP.UnityDiameter = PlanetAP.UnityDiameter ;
+            ChildAsteroidAP.RealDiameter = PlanetAP.RealDiameter ;
+            CurrentAsteroid.transform.localScale = new Vector3(ChildAsteroidAP.UnityDiameter/2,
+                                                               ChildAsteroidAP.UnityDiameter/2,
+                                                               ChildAsteroidAP.UnityDiameter/2);
+            NumberOfAsteroids--;
+            child.GetComponent<MeshRenderer>().material = PlanetMR.material;
         }
         Player PlayerObj = FindObjectOfType<Player>();
         PlayerObj.LookAtPlanetLookAt = false;
@@ -111,8 +109,9 @@ public class Planet : MonoBehaviour
         PlayerObj.AttemptingToCollect = false;
         PlanetAP.ThisRealMass = 0;
         PlanetAP.ThisSolarMass = 0;
-        StartCoroutine(ShrinkPlanet());       
-        
+        Destroy(gameObject);
+        //StartCoroutine(ShrinkPlanet());       
+
     }
     IEnumerator ShrinkPlanet()
     {

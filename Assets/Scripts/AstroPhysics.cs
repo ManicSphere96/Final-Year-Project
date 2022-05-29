@@ -123,14 +123,14 @@ public class AstroPhysics : MonoBehaviour
          * to return acceleration we can cancel m out so we only require the other objects mass.
          */
     }
-    public float StableVelocity(float CenterMass, float Distance)
+    public float StableOrbitVelocity(float CenterMass, float Distance)
     {
         // this gives avelocity to obtain a circular orbit for the object in question. 
         return Mathf.Sqrt((FindObjectOfType<APParent>().GetGUnity() * CenterMass) / Distance);
     }
-    public float GetDistanceUnity(AstroPhysics other)
+    public float GetDistanceUnity(Vector3 other)
     {
-        return Vector3.Distance(this.transform.position, other.transform.position);
+        return Vector3.Distance(this.transform.position, other);
     }
     public void AddVelocity(Vector3 vel)
     {
@@ -143,10 +143,6 @@ public class AstroPhysics : MonoBehaviour
     public Vector3 GetVelocityUnity()
     {
         return thisVelUnity;
-    }
-    public void SetDistance (float dist)
-    {
-        this.transform.position.Set(0,0,dist);
     }
 
     public float RealMassToUnity(double RealMass)

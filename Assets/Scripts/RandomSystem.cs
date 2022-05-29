@@ -178,7 +178,7 @@ public class RandomSystem : MonoBehaviour
             {
                 PlanetAP.OrbitalInclination =  (float)Random.Range(0, 180);
             }
-            float initVelocity = PlanetAP.StableVelocity(TheSun.GetComponent<AstroPhysics>().ThisSolarMass, PlanetAP.GetDistanceUnity(TheSun.GetComponent<AstroPhysics>()));
+            float initVelocity = PlanetAP.StableOrbitVelocity(TheSun.GetComponent<AstroPhysics>().ThisSolarMass, PlanetAP.GetDistanceUnity(TheSun.transform.position));
             Quaternion Planetangleaxis = Quaternion.AngleAxis(PlanetAP.OrbitalInclination,  Vector3.forward);
             PlanetAP.AddVelocity(Planetangleaxis * new Vector3(0, initVelocity, 0));
             float RandomMoonDistanceStartPoint = Random.Range((float)PlanetAP.RealDiameter, (float)PlanetAP.RealDiameter*3.0f);
@@ -269,7 +269,7 @@ public class RandomSystem : MonoBehaviour
                 {
                     MoonAP.OrbitalInclination = (float)Random.Range(0, 180);
                 }
-                float InitMoonVelocity = PlanetAP.StableVelocity(PlanetAP.ThisSolarMass, Dist);
+                float InitMoonVelocity = PlanetAP.StableOrbitVelocity(PlanetAP.ThisSolarMass, Dist);
                 Quaternion moonangleaxis = Quaternion.AngleAxis(MoonAP.OrbitalInclination, new Vector3(0, 0, 1));
                 // Parent Planet velocity + the angular velocity of the moon at its position
                 Vector3 MoonVelocity = PlanetAP.GetVelocityUnity() * ((Planets[i].transform.position.z + Dist) / Planets[i].transform.position.z);

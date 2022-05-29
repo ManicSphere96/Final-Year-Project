@@ -60,11 +60,11 @@ public class Player : MonoBehaviour
                 {
                     MeshRenderer OuterMR = PhysObjs[i].gameObject.transform.Find("Outer").GetComponent<MeshRenderer>();
                     Color MyColour = OuterMR.material.color;
-                    MyColour.a = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), 
+                    MyColour.a = SmoothScale(PhysObjs[i].GetDistanceUnity(this.transform.position), 
                                             (PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x) / 2, 
                                             ((PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x) / 2) + 10.0f);
                     OuterMR.material.SetColor("_Color", MyColour);
-                     float TimeChangeFloat = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()), 
+                     float TimeChangeFloat = SmoothScale(PhysObjs[i].GetDistanceUnity(this.transform.position), 
                                                          PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x / 4, 
                                                          PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x / 2);
                     if ((TimeChangeFloat != 1.0f)&& (TimeChangeFloat<0.9f))
@@ -75,10 +75,14 @@ public class Player : MonoBehaviour
                 }
                 
                 
-                float distance = PhysObjs[i].GetDistanceUnity(PlayerAP);
+                float distance = PhysObjs[i].GetDistanceUnity(PlayerAP.transform.position);
                 
                 if (distance < 2)
                 {
+                    if (PhysObjs[i].GetComponent<PlanetAttack>() !=null)
+                    {
+                        PhysObjs[i].GetComponent<PlanetAttack>().IsAttacking = true;
+                    }
                     if (AttemptingToCollect)
                     {
                         if (PhysObjs[i].GetComponent<Slaveable>() != null)
@@ -141,13 +145,17 @@ public class Player : MonoBehaviour
                         PlayerPS.gameObject.SetActive(false);
                         ParticleSystemActive = 0 ;
                     }
+                    if (PhysObjs[i].GetComponent<PlanetAttack>() != null)
+                    {
+                        PhysObjs[i].GetComponent<PlanetAttack>().IsAttacking = false;
+                    }
                 }
                 
             }
             
             if (PhysObjs[i].gameObject.name == "Asteroid(Clone)")
             {
-                float TimeChangeFloat = SmoothScale(PhysObjs[i].GetDistanceUnity(this.GetComponent<AstroPhysics>()),1,2);
+                float TimeChangeFloat = SmoothScale(PhysObjs[i].GetDistanceUnity(this.transform.position),1,2);
                 if ((TimeChangeFloat != 1.0f) && (TimeChangeFloat < 0.9f))
                 {
                     FindObjectOfType<TimeChange>().RateOfTime = TimeChangeFloat + 0.1f;
@@ -236,4 +244,8 @@ public class Player : MonoBehaviour
         return x;
     }
 
+    public void PushPlayer(Vector3 Direction)
+    {
+        PlayerAP.AddVelocity(Direction * 0.1f);
+    }
 }
