@@ -44,24 +44,17 @@ public class AstroPhysics : MonoBehaviour
         List<AstroPhysics> PhysObjs = APParentObj.APObjs;
         if ((Active) && (PhysObjs != null))
         {
-            AccelerationInDirection = new Vector3(0, 0, 0);
             AccelerationInDirectionDouble = new Vector3d(0, 0, 0);
-
             for (int i = 0; i < PhysObjs.Count; i++)
             {
-
-                if (this != PhysObjs[i])
+                AstroPhysics other = PhysObjs[i];
+                if (this != other)
                 {
-
-
-                    AstroPhysics other = PhysObjs[i];
                     double DistanceSQUDouble = (new Vector3d(other.GetComponent<Transform>().position) - new Vector3d(this.transform.position)).sqrMagnitude;
                     //force acting on current Gravitational object from given gravitational object
-                    AccelerationUnityDouble = AccelerationFromGravity(PhysObjs[i], DistanceSQUDouble);
-                    AccelerationInDirectionDouble += -AccelerationUnityDouble * (new Vector3d(this.transform.position) - new Vector3d(PhysObjs[i].GetComponent<Transform>().position)).normalized;
+                    AccelerationUnityDouble = AccelerationFromGravity(other, DistanceSQUDouble);
+                    AccelerationInDirectionDouble += -AccelerationUnityDouble * (new Vector3d(this.transform.position) - new Vector3d(other.GetComponent<Transform>().position)).normalized;
                     //Debug.Log("ObjectID = ," + this.ID + ",  other ID = ," + other.ID + ", Acceleration = ," + AccelerationUnityDouble);
-
-
                 }
             }
             //current velocity is equal to the previous velocity 
@@ -70,8 +63,7 @@ public class AstroPhysics : MonoBehaviour
             //                  f=ma f/m = a                a=km/s/s a*t = v = km/s 
             // the new position = the old position + the change due to the current velocity    
             this.transform.position = this.transform.position + (thisVelUnity * Time.smoothDeltaTime);
-        }
-        
+        }      
     }
 
     void OnCollisionEnter(Collision collision)

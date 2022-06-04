@@ -16,11 +16,14 @@ public class PlanetAttack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (IsAttacking)
+        if (this.GetComponent<Planet>().IsPlanetInhabited)
         {
-            
-            StartCoroutine(Attack());
-            
+            if (IsAttacking)
+            {
+
+                StartCoroutine(Attack());
+
+            }
         }
     }
     void FireMissle()

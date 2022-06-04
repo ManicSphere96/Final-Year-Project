@@ -18,8 +18,11 @@ public class PauseMenu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape) == true)
         {
-           PanelToActivate.SetActive(!PanelToActivate.activeInHierarchy);
-           CameraToActivate.SetActive(!PanelToActivate.activeInHierarchy);
+            PanelToActivate.SetActive(!PanelToActivate.activeInHierarchy);           
+        }
+        if (PanelToActivate.activeInHierarchy)
+        {
+            FindObjectOfType<TimeChange>().RateOfTime = 0;
         }
     }
 }

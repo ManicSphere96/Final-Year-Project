@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 31874063926577490}
   - component: {fileID: -2514817111043440300}
   - component: {fileID: 7010464305445146365}
+  - component: {fileID: 2800018490527396814}
   m_Layer: 0
   m_Name: GasPlanet
   m_TagString: AstroPhysicsObj
@@ -136,6 +137,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NumOfMoons: 0
   PlanetNum: 0
+  IsPlanetInhabited: 0
+  InitNumberOfResources: 0
+  BufferNumberInit: 500
   BufferNumber: 500
   ResourceANumber: 12
   ResourceBNumber: 0
@@ -171,6 +175,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5ab4c51f734e344baa4b64aba7fdd6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2800018490527396814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6059705901486919949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd0c54d4ef5568b4197bb11cbcd81897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MisslePrefab: {fileID: 3487624061941538703, guid: d16a755241117dd4596ba6550de7d3ab, type: 3}
+  IsAttacking: 0
 --- !u!1 &8623659494140142789
 GameObject:
   m_ObjectHideFlags: 0

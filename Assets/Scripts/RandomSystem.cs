@@ -4,21 +4,23 @@ using UnityEngine;
 
 public class RandomSystem : MonoBehaviour
 {
+    public int Level;
     public GameObject SunPrefab;
     public GameObject RockyPlanetPrefab;
     public GameObject GasPlanetPrefab;
     public GameObject MoonPrefab;
     public GameObject Parent;
-
+    public Material[] GasMats;
+    public Material[] RockyMats;
     float SunScaleConstant = 100;
     float PlanetScaleConstant = 2;
-    float MoonScaleConstant = 10;
+    float MoonScaleConstant = 50;
     float GasOuterScaleConstant= 300;
     float RockyOuterScaleConstant = 450;
     double GravityRatioConstant = 5;
     void Start()
     {
-
+        CreateRandomSystem();
     }
 
     void Update()
@@ -132,6 +134,11 @@ public class RandomSystem : MonoBehaviour
 
             Distances[i] = (SunPrefabPhys.UnityDiameter * SunScaleConstant)/1.75f + RandomDistanceStartPoint * (Mathf.Exp(0.6f * (i + 1.0f)))*10;
         }
+        int RandomPlanetInhabited = 10;
+        if (Level == 1)
+        {
+             RandomPlanetInhabited = Random.Range(0, Planets.Length);
+        }
         for (int i = 0; i < Planets.Length; i++)
         {
             Quaternion PlanetStartRotation = Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.up);
@@ -145,6 +152,10 @@ public class RandomSystem : MonoBehaviour
                 PlanetAP.RealDiameter = 0.0009f * Mathf.Pow((float)PlanetAP.ThisRealMass, 0.4122f);
                 PlanetAP.UnityDiameter = PlanetAP.RealDistToUnity(PlanetAP.RealDiameter);
                 Planets[i].transform.localScale = new Vector3(1, 1, 1) * (PlanetAP.UnityDiameter * PlanetScaleConstant);
+                PlanetAP.GetComponent<Planet>().InitNumberOfResources = Random.Range(100, 5000);
+                
+                Planets[i].GetComponent<MeshRenderer>().material = RockyMats[Random.Range(0, RockyMats.Length)];
+                
                 
                 if ((Random.Range(0.0f, 1.0f) > 0.5f)&&(i!=0))
                 {
@@ -164,9 +175,12 @@ public class RandomSystem : MonoBehaviour
                 PlanetAP.RealDiameter = 0.0009f * Mathf.Pow((float)PlanetAP.ThisRealMass, 0.4122f);
                 PlanetAP.UnityDiameter = PlanetAP.RealDistToUnity(PlanetAP.RealDiameter);
                 Planets[i].transform.localScale = new Vector3(1, 1, 1) * (PlanetAP.UnityDiameter * PlanetScaleConstant);
-                Planets[i].GetComponent<Planet>().NumOfMoons = Random.Range(3, 120);
+                Planets[i].GetComponent<Planet>().NumOfMoons = Random.Range(3, 6);
+                PlanetAP.GetComponent<Planet>().InitNumberOfResources = Random.Range(1000, 10000);
+                Planets[i].GetComponent<MeshRenderer>().material = GasMats[Random.Range(0, GasMats.Length)];
             }
             Planets[i].GetComponent<Planet>().PlanetNum = i;
+            Planets[i].transform.Find("Outer").GetComponent<MeshRenderer>().material = Planets[i].GetComponent<MeshRenderer>().material;
             PlanetAP.ID = (i + 1) * 100;
             if   (Random.Range(0,10) !=1)
             {
@@ -182,8 +196,14 @@ public class RandomSystem : MonoBehaviour
             Quaternion Planetangleaxis = Quaternion.AngleAxis(PlanetAP.OrbitalInclination,  Vector3.forward);
             PlanetAP.AddVelocity(Planetangleaxis * new Vector3(0, initVelocity, 0));
             float RandomMoonDistanceStartPoint = Random.Range((float)PlanetAP.RealDiameter, (float)PlanetAP.RealDiameter*3.0f);
-
-            
+            if (i== RandomPlanetInhabited)
+            {
+                PlanetAP.GetComponent<Planet>().IsPlanetInhabited = true;
+            }
+            if (Level !=1)
+            {
+                PlanetAP.GetComponent<Planet>().IsPlanetInhabited = true;
+            }
            
 
 
@@ -217,19 +237,6 @@ public class RandomSystem : MonoBehaviour
                 
 
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             for (int j = 0; j <Moons.Length; j++)

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -19,6 +19,18 @@ public class Player : MonoBehaviour
     public float SlowScalarVelRight;
     public bool LookAtPlanetLookAt = false;
     public bool OnlyOnce = true;
+    bool UIOn= false;
+    int UIOnForPlanet;
+    public RawImage UILight1; // able to enter stable orbit
+    public RawImage UILight2; // Look At
+    public RawImage UILight3; // Collecting from Planet
+    public GameObject ExitGameUI;
+    bool HaventAsked;
+    bool ContinueClicked;
+    public int MaxResources;
+    public int ResourcesCollected;
+
+
 
     void Start()
     {
@@ -51,7 +63,7 @@ public class Player : MonoBehaviour
         {
             PlayerPS.gameObject.SetActive(false);
         }
-        
+        UIOn = false;
         for (int i = 0; i < PhysObjs.Count; i++)
         {
             if ((PlayerAP != PhysObjs[i])&& (PhysObjs[i].gameObject.GetComponent<Planet>() != null))
@@ -79,6 +91,10 @@ public class Player : MonoBehaviour
                 
                 if (distance < 2)
                 {
+                    UIOn = true;
+                    UIOnForPlanet = i;
+
+
                     if (PhysObjs[i].GetComponent<PlanetAttack>() !=null)
                     {
                         PhysObjs[i].GetComponent<PlanetAttack>().IsAttacking = true;
@@ -92,8 +108,11 @@ public class Player : MonoBehaviour
                                 PhysObjs[i].GetComponent<Planet>().Collecting = true;
                                 ParticleSystem.MainModule newMain = PlayerPS.main;
                                 newMain.startColor = new Color(1, 0, 0, 1);
+                                ParticleSystem.EmissionModule newemission = PlayerPS.emission;
+                                newemission.rateOverTime = 5 / FindObjectOfType<TimeChange>().RateOfTime;
                                 PlayerPS.gameObject.SetActive(true);
                                 ParticleSystemActive = PhysObjs[i].ID;
+                                UILight3.color = new Color(0, 1, 0, 1);
                             }
                         }
                         else
@@ -105,10 +124,12 @@ public class Player : MonoBehaviour
                             newemission.rateOverTime =  5  /FindObjectOfType<TimeChange>().RateOfTime;
                             PlayerPS.gameObject.SetActive(true);
                             ParticleSystemActive = PhysObjs[i].ID;
+                            UILight3.color = new Color(0, 1, 0, 1);
                         }
                     }
                     else
                     {
+                        UILight3.color = new Color(1, 1, 1, 1);
                         PhysObjs[i].GetComponent<Planet>().Collecting = false;
                         if ((ParticleSystemActive == PhysObjs[i].ID))
                         {
@@ -119,6 +140,7 @@ public class Player : MonoBehaviour
                     
                     if (LookAtPlanet)
                     {
+                        UILight2.color = new Color(0, 0, 1, 1);
                         if (LookAtPlanetLookAt)
                         {
                             this.transform.LookAt(PhysObjs[i].transform);
@@ -129,6 +151,10 @@ public class Player : MonoBehaviour
                             transform.rotation = Quaternion.Slerp(transform.rotation, LookRotation, Time.deltaTime * 50.0f);
                             StartCoroutine(WaitForLookAt());
                         }
+                    }
+                    else
+                    {
+                        UILight2.color = new Color(1, 1, 1, 1);
                     }
                     
                     if (Input.GetKey(KeyCode.LeftControl))
@@ -162,6 +188,38 @@ public class Player : MonoBehaviour
                 }
             }
         }
+        if (UIOn)
+        {
+
+            FindObjectOfType<UI>().UpdateUIText(PhysObjs[UIOnForPlanet].GetComponent<Planet>(), PhysObjs[UIOnForPlanet]);
+            FindObjectOfType<UI>().TextPanel.SetActive(true);
+            UILight1.color = new Color(1, 0, 0, 1);
+        }
+        else
+        {
+            FindObjectOfType<UI>().TextPanel.SetActive(false);
+            UILight1.color = new Color(1, 1, 1, 1);
+        }
+
+        if ((this.transform.position.magnitude > 200)&& (HaventAsked) && (!ContinueClicked))
+        {
+            ExitGameUI.SetActive(true);
+            
+        }
+        else if ((this.transform.position.magnitude > 200) && (!HaventAsked)&& (ContinueClicked))
+        {
+            ExitGameUI.SetActive(false);
+        }
+        else if ((this.transform.position.magnitude > 200) && (ContinueClicked))
+        {
+            ContinueClicked = false;
+        }
+        else
+        {
+            ExitGameUI.SetActive(false);
+            HaventAsked = true;
+        }
+
     }
     
     IEnumerator  WaitForLookAt()
@@ -174,6 +232,11 @@ public class Player : MonoBehaviour
             
         }
         yield return null;
+    }
+    public void ContinueClick()
+    {
+        HaventAsked = false;
+        ContinueClicked = true;
     }
     
     void Rotate()

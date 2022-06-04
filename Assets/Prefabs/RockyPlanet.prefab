@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 76016b54a6b6ad74798084de07847b7c, type: 2}
+  - {fileID: 2100000, guid: 27d97cf4f97e88e449dd2977218912e1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96,6 +96,8 @@ GameObject:
   - component: {fileID: 3000886783220663022}
   - component: {fileID: 7898951707332694428}
   - component: {fileID: -3457676567554370441}
+  - component: {fileID: 7797806124028385102}
+  - component: {fileID: 7365178743211380981}
   m_Layer: 0
   m_Name: RockyPlanet
   m_TagString: AstroPhysicsObj
@@ -145,7 +147,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 76016b54a6b6ad74798084de07847b7c, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -216,6 +218,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NumOfMoons: 0
   PlanetNum: 0
+  IsPlanetInhabited: 0
+  InitNumberOfResources: 0
+  BufferNumberInit: 500
   BufferNumber: 500
   ResourceANumber: 100
   ResourceBNumber: 100
@@ -239,3 +244,30 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 14
   m_CollisionDetection: 0
+--- !u!114 &7797806124028385102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000886783220663013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5ab4c51f734e344baa4b64aba7fdd6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UILight4: {fileID: 0}
+--- !u!114 &7365178743211380981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000886783220663013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd0c54d4ef5568b4197bb11cbcd81897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MisslePrefab: {fileID: 3487624061941538703, guid: d16a755241117dd4596ba6550de7d3ab, type: 3}
+  IsAttacking: 0
