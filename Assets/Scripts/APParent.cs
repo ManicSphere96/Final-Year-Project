@@ -41,7 +41,7 @@ public class APParent : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+  
     void Update()
     {
         APObjs = ((AstroPhysics[])FindObjectsOfType<AstroPhysics>()).ToList();

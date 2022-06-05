@@ -1281,8 +1281,8 @@ MonoBehaviour:
   OrbitalInclination: 0
   ThisSolarMass: 0
   DistanceFromPlanet: 0
-  RealDiameter: 0
   UnityDiameter: 0
+  RealDiameter: 0
 --- !u!54 &615975959
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7665,7 +7665,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DistanceScaleM2U: 1.496e+10
-  TimeScaleS2U: 1000000
+  TimeScaleS2U: 100000
   MassScaleKg2U: 1.989e+30
   DistanceScaleU2M: 0
   TimeScaleU2S: 0

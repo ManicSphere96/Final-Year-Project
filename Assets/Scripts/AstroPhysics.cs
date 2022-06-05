@@ -12,11 +12,8 @@ public class AstroPhysics : MonoBehaviour
     public APParent APParentObj;
     bool CollisionOnlyOnce = false;
     public int ID;
-    public float OrbitalInclination;
-    public float ThisSolarMass;
-    public float DistanceFromPlanet;
+    public float OrbitalInclination, ThisSolarMass, DistanceFromPlanet, UnityDiameter;
     public double RealDiameter;
-    public float UnityDiameter;
     Vector3 AccelerationInDirection;
     Vector3d AccelerationInDirectionDouble;
     double AccelerationUnityDouble;
@@ -34,7 +31,7 @@ public class AstroPhysics : MonoBehaviour
         ThisSolarMass = RealMassToUnity(ThisRealMass);
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         
@@ -42,7 +39,7 @@ public class AstroPhysics : MonoBehaviour
         if ((Active) && (PhysObjs != null))
         {
             AccelerationInDirectionDouble = new Vector3d(0, 0, 0);
-            for (int i = 0; i < PhysObjs.Count; i++)
+            for (int i = 0; i < PhysObjs.Count; i++)// Order n ^2 loop
             {
                 AstroPhysics other = PhysObjs[i];
                 if (this != other)
@@ -51,14 +48,10 @@ public class AstroPhysics : MonoBehaviour
                     //force acting on current Gravitational object from given gravitational object
                     AccelerationUnityDouble = AccelerationFromGravity(other, DistanceSQUDouble);
                     AccelerationInDirectionDouble += -AccelerationUnityDouble * (new Vector3d(this.transform.position) - new Vector3d(other.GetComponent<Transform>().position)).normalized;
-                    //Debug.Log("ObjectID = ," + this.ID + ",  other ID = ," + other.ID + ", Acceleration = ," + AccelerationUnityDouble);
                 }
             }
-            //current velocity is equal to the previous velocity 
             AccelerationInDirection = new Vector3((float)AccelerationInDirectionDouble.x, (float)AccelerationInDirectionDouble.y, (float)AccelerationInDirectionDouble.z);
             thisVelUnity += (AccelerationInDirection * Time.smoothDeltaTime);
-            //                  f=ma f/m = a                a=km/s/s a*t = v = km/s 
-            // the new position = the old position + the change due to the current velocity    
             this.transform.position = this.transform.position + (thisVelUnity * Time.smoothDeltaTime);
         }      
     }
@@ -76,12 +69,6 @@ public class AstroPhysics : MonoBehaviour
         if ((!CollisionOnlyOnce)&&(!collision.gameObject.GetComponent<AstroPhysics>().CollisionOnlyOnce))
         {
             GameObject other = collision.gameObject;
-
-            
-
-            
-            //this = this
-
             float m1, m2, x1, x2;
             Vector3 v1, v2, v1x, v2x, v1y, v2y, x = (this.transform.position - other.transform.position).normalized;
 

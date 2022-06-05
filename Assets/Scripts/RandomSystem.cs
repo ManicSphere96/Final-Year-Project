@@ -5,11 +5,7 @@ using UnityEngine;
 public class RandomSystem : MonoBehaviour
 {
     public int Level;
-    public GameObject SunPrefab;
-    public GameObject RockyPlanetPrefab;
-    public GameObject GasPlanetPrefab;
-    public GameObject MoonPrefab;
-    public GameObject Parent;
+    public GameObject SunPrefab, RockyPlanetPrefab,GasPlanetPrefab, MoonPrefab, Parent;
     public Material[] GasMats;
     public Material[] RockyMats;
     float SunScaleConstant = 100;
@@ -20,7 +16,7 @@ public class RandomSystem : MonoBehaviour
     double GravityRatioConstant = 5;
     void Start()
     {
-        StartCoroutine(WaitForUnity());
+        StartCoroutine(WaitForUnity());// This avoids the very unstable deltatime at the beginning. 
     }
 
     void Update()
@@ -33,7 +29,17 @@ public class RandomSystem : MonoBehaviour
         CreateRandomSystem();
     }
     double normsinv(double p)
-    {
+    {//https://github.com/bioidiap/bob.math/blob/master/LICENSE
+     //https://github.com/bioidiap/bob.math/blob/master/bob/math/cpp/norminv.cpp
+        /**
+         * @date Tue Apr 12 21:33:32 2011 +0200
+         * @author Laurent El Shafey <Laurent.El-Shafey@idiap.ch>
+         *
+         * @brief Implementation of the inverse normal cumulative distribution
+         *   function
+         *
+         * Copyright (C) Idiap Research Institute, Martigny, Switzerland
+         */
         // Coefficients in rational approximations
         double a1 = -3.969683028665376e+01;
         double a2 = 2.209460984245205e+02;
@@ -91,15 +97,26 @@ public class RandomSystem : MonoBehaviour
 
     double norminv( double p,  double mu,  double sigma)
     {
-    // Take the mean and sigma (standard deviation) into account
-    return sigma* normsinv(p) + mu;
+        //https://github.com/bioidiap/bob.math/blob/master/LICENSE
+        //https://github.com/bioidiap/bob.math/blob/master/bob/math/cpp/norminv.cpp
+        /**
+         * @date Tue Apr 12 21:33:32 2011 +0200
+         * @author Laurent El Shafey <Laurent.El-Shafey@idiap.ch>
+         *
+         * @brief Implementation of the inverse normal cumulative distribution
+         *   function
+         *
+         * Copyright (C) Idiap Research Institute, Martigny, Switzerland
+         */
+        // Take the mean and sigma (standard deviation) into account
+        return sigma * normsinv(p) + mu;
     }
 
 
     public void CreateRandomSystem()
     {
 
-        Random.InitState(1);
+        
         float Solarmass = Random.Range(0.57f, 1.64f);
         double RealMass = FindObjectOfType<AstroPhysics>().UnityMassToReal(Solarmass);
         double mu = 89.18;
@@ -248,7 +265,7 @@ public class RandomSystem : MonoBehaviour
                 
                 float Dist;
 
-                //Distances[i] = (SunPrefabPhys.UnityDiameter * SunScaleConstant) / 1.75f + RandomDistanceStartPoint * (Mathf.Exp(0.6f * (i + 1.0f))) * 10;
+                
 
                 Dist = PlanetAP.RealDistToUnity(RandomMoonDistanceStartPoint);
                 RandomMoonDistanceStartPoint = RandomMoonDistanceStartPoint * 2;
@@ -288,8 +305,8 @@ public class RandomSystem : MonoBehaviour
                 MoonAP.AddVelocity((moonangleaxis * new Vector3(0, InitMoonVelocity, 0)) + MoonVelocity);
 
                 MoonAP.ID = PlanetAP.ID + j + 1;
-                //MoonAP.RealDiameter = ; 
-                MoonAP.UnityDiameter = 0.0001431708F; //MoonAP.RealDistToUnity(MoonAP.RealDiameter);
+                
+                MoonAP.UnityDiameter = 0.0001431708F; 
                 Moons[j].transform.localScale = new Vector3(MoonAP.UnityDiameter * MoonScaleConstant, MoonAP.UnityDiameter * MoonScaleConstant, MoonAP.UnityDiameter * MoonScaleConstant);
                 Moons[j].transform.position = PlanetStartRotation * Moons[j].transform.position;
                 MoonAP.SetVelocity(PlanetStartRotation * MoonAP.GetVelocityUnity());
