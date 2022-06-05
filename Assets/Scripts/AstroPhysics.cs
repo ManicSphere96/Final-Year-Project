@@ -32,9 +32,6 @@ public class AstroPhysics : MonoBehaviour
     {
         APParentObj = FindObjectOfType<APParent>();
         ThisSolarMass = RealMassToUnity(ThisRealMass);
-        
-        
-        
     }
 
     // Update is called once per frame
@@ -68,6 +65,14 @@ public class AstroPhysics : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (this.ID == 0)  
+        {
+            Destroy(collision.gameObject);
+        }
+        if (collision.gameObject.GetComponent<AstroPhysics>().ID == 0)
+        {
+            Destroy(gameObject);
+        }
         if ((!CollisionOnlyOnce)&&(!collision.gameObject.GetComponent<AstroPhysics>().CollisionOnlyOnce))
         {
             GameObject other = collision.gameObject;

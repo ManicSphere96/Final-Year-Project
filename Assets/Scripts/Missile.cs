@@ -5,7 +5,7 @@ using UnityEngine;
 public class Missile : MonoBehaviour
 {
     public GameObject Target;
-    float speed = 0.001f;
+    float speed = 0.01f;
     
     // Start is called before the first frame update
     void Start()
@@ -27,7 +27,7 @@ public class Missile : MonoBehaviour
 
         for (int i =0; i<PhysObjs.Count; i++)
         {
-            if (PhysObjs[i].GetDistanceUnity(this.transform.position)< 0.001)
+            if (PhysObjs[i].GetDistanceUnity(this.transform.position)< 0.01)
             {
                 Destroy(this.gameObject);
             }

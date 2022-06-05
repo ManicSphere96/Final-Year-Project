@@ -11,8 +11,8 @@ public class Planet : MonoBehaviour
     public int PlanetNum;
     public bool IsPlanetInhabited;
     public int InitNumberOfResources;
-    public int BufferNumberInit = 500;
-    public int BufferNumber ;
+    int BufferNumberInit = 125;
+    int BufferNumber ;
     public int ResourceANumber;
     public int ResourceBNumber;
     public int ResourceCNumber;

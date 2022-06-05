@@ -113,7 +113,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3000886783220663013}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 10}
+  m_LocalPosition: {x: 1.514, y: 0, z: 10}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 8105020804839599091}
@@ -220,14 +220,13 @@ MonoBehaviour:
   PlanetNum: 0
   IsPlanetInhabited: 0
   InitNumberOfResources: 0
-  BufferNumberInit: 500
-  BufferNumber: 500
   ResourceANumber: 100
   ResourceBNumber: 100
   ResourceCNumber: 100
   ResourceDNumber: 100
   Collecting: 0
-  AsteroidPrefab: {fileID: 8716633929729820376, guid: ec1b343c3d7f4994c86bb7ffe0b5651f, type: 3}
+  AsteroidPrefab: {fileID: 5252139101695584933, guid: 1693c7a2801a17b4c9bfc8c523150fea, type: 3}
+  RemainingResources: 0
 --- !u!54 &-3457676567554370441
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -269,5 +268,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0c54d4ef5568b4197bb11cbcd81897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MisslePrefab: {fileID: 3487624061941538703, guid: d16a755241117dd4596ba6550de7d3ab, type: 3}
+  MisslePrefab: {fileID: 2144116790722984240, guid: a126c7fbcb6733b41b4d8650b07e065f, type: 3}
   IsAttacking: 0

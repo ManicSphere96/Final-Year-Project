@@ -45,7 +45,7 @@ public class APParent : MonoBehaviour
     void Update()
     {
         APObjs = ((AstroPhysics[])FindObjectsOfType<AstroPhysics>()).ToList();
-          
+        
     }
     public float GetGUnity()
     {

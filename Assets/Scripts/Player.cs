@@ -64,6 +64,7 @@ public class Player : MonoBehaviour
             PlayerPS.gameObject.SetActive(false);
         }
         UIOn = false;
+        float Closest = 100;
         for (int i = 0; i < PhysObjs.Count; i++)
         {
             if ((PlayerAP != PhysObjs[i])&& (PhysObjs[i].gameObject.GetComponent<Planet>() != null))
@@ -76,14 +77,7 @@ public class Player : MonoBehaviour
                                             (PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x) / 2, 
                                             ((PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x) / 2) + 10.0f);
                     OuterMR.material.SetColor("_Color", MyColour);
-                     float TimeChangeFloat = SmoothScale(PhysObjs[i].GetDistanceUnity(this.transform.position), 
-                                                         PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x / 4, 
-                                                         PhysObjs[i].UnityDiameter * OuterMR.gameObject.transform.localScale.x / 2);
-                    if ((TimeChangeFloat != 1.0f)&& (TimeChangeFloat<0.9f))
-                    {
-                        FindObjectOfType<TimeChange>().RateOfTime = TimeChangeFloat + 0.1f;
-                    }
-                
+                     
                 }
                 
                 
@@ -109,7 +103,7 @@ public class Player : MonoBehaviour
                                 ParticleSystem.MainModule newMain = PlayerPS.main;
                                 newMain.startColor = new Color(1, 0, 0, 1);
                                 ParticleSystem.EmissionModule newemission = PlayerPS.emission;
-                                newemission.rateOverTime = 5 / FindObjectOfType<TimeChange>().RateOfTime;
+                                newemission.rateOverTime = 10000;
                                 PlayerPS.gameObject.SetActive(true);
                                 ParticleSystemActive = PhysObjs[i].ID;
                                 UILight3.color = new Color(0, 1, 0, 1);
@@ -121,7 +115,7 @@ public class Player : MonoBehaviour
                             ParticleSystem.MainModule newMain = PlayerPS.main;
                             newMain.startColor = new Color(1, 0, 0, 1);
                             ParticleSystem.EmissionModule newemission = PlayerPS.emission;
-                            newemission.rateOverTime =  5  /FindObjectOfType<TimeChange>().RateOfTime;
+                            newemission.rateOverTime =  10000;
                             PlayerPS.gameObject.SetActive(true);
                             ParticleSystemActive = PhysObjs[i].ID;
                             UILight3.color = new Color(0, 1, 0, 1);
@@ -176,17 +170,14 @@ public class Player : MonoBehaviour
                         PhysObjs[i].GetComponent<PlanetAttack>().IsAttacking = false;
                     }
                 }
+                if (PhysObjs[i].GetDistanceUnity(this.transform.position)<Closest)
+                {
+                    Closest = PhysObjs[i].GetDistanceUnity(this.transform.position);
+                }
                 
             }
-            
-            if (PhysObjs[i].gameObject.name == "Asteroid(Clone)")
-            {
-                float TimeChangeFloat = SmoothScale(PhysObjs[i].GetDistanceUnity(this.transform.position),1,2);
-                if ((TimeChangeFloat != 1.0f) && (TimeChangeFloat < 0.9f))
-                {
-                    FindObjectOfType<TimeChange>().RateOfTime = TimeChangeFloat + 0.1f;
-                }
-            }
+            float TimeChangeFloat = SmoothScale(Closest,0.5f,2f);
+            FindObjectOfType<TimeChange>().RateOfTime = ((TimeChangeFloat*0.9f )+0.1f);
         }
         if (UIOn)
         {
@@ -309,6 +300,6 @@ public class Player : MonoBehaviour
 
     public void PushPlayer(Vector3 Direction)
     {
-        PlayerAP.AddVelocity(Direction * 0.1f);
+        PlayerAP.AddVelocity(Direction * 0.5f);
     }
 }

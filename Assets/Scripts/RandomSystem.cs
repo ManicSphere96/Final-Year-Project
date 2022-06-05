@@ -14,20 +14,24 @@ public class RandomSystem : MonoBehaviour
     public Material[] RockyMats;
     float SunScaleConstant = 100;
     float PlanetScaleConstant = 2;
-    float MoonScaleConstant = 50;
+    float MoonScaleConstant = 25;
     float GasOuterScaleConstant= 300;
     float RockyOuterScaleConstant = 450;
     double GravityRatioConstant = 5;
     void Start()
     {
-        CreateRandomSystem();
+        StartCoroutine(WaitForUnity());
     }
 
     void Update()
     {
         
     }
-
+    IEnumerator WaitForUnity()
+    {
+        yield return new WaitForSecondsRealtime(1);
+        CreateRandomSystem();
+    }
     double normsinv(double p)
     {
         // Coefficients in rational approximations
@@ -152,7 +156,7 @@ public class RandomSystem : MonoBehaviour
                 PlanetAP.RealDiameter = 0.0009f * Mathf.Pow((float)PlanetAP.ThisRealMass, 0.4122f);
                 PlanetAP.UnityDiameter = PlanetAP.RealDistToUnity(PlanetAP.RealDiameter);
                 Planets[i].transform.localScale = new Vector3(1, 1, 1) * (PlanetAP.UnityDiameter * PlanetScaleConstant);
-                PlanetAP.GetComponent<Planet>().InitNumberOfResources = Random.Range(100, 5000);
+                PlanetAP.GetComponent<Planet>().InitNumberOfResources = Random.Range(100, 2500);
                 
                 Planets[i].GetComponent<MeshRenderer>().material = RockyMats[Random.Range(0, RockyMats.Length)];
                 
@@ -176,7 +180,7 @@ public class RandomSystem : MonoBehaviour
                 PlanetAP.UnityDiameter = PlanetAP.RealDistToUnity(PlanetAP.RealDiameter);
                 Planets[i].transform.localScale = new Vector3(1, 1, 1) * (PlanetAP.UnityDiameter * PlanetScaleConstant);
                 Planets[i].GetComponent<Planet>().NumOfMoons = Random.Range(3, 6);
-                PlanetAP.GetComponent<Planet>().InitNumberOfResources = Random.Range(1000, 10000);
+                PlanetAP.GetComponent<Planet>().InitNumberOfResources = Random.Range(500, 1000);
                 Planets[i].GetComponent<MeshRenderer>().material = GasMats[Random.Range(0, GasMats.Length)];
             }
             Planets[i].GetComponent<Planet>().PlanetNum = i;
@@ -195,7 +199,7 @@ public class RandomSystem : MonoBehaviour
             float initVelocity = PlanetAP.StableOrbitVelocity(TheSun.GetComponent<AstroPhysics>().ThisSolarMass, PlanetAP.GetDistanceUnity(TheSun.transform.position));
             Quaternion Planetangleaxis = Quaternion.AngleAxis(PlanetAP.OrbitalInclination,  Vector3.forward);
             PlanetAP.AddVelocity(Planetangleaxis * new Vector3(0, initVelocity, 0));
-            float RandomMoonDistanceStartPoint = Random.Range((float)PlanetAP.RealDiameter, (float)PlanetAP.RealDiameter*3.0f);
+            float RandomMoonDistanceStartPoint = Random.Range((float)PlanetAP.RealDiameter *1.5f, (float)PlanetAP.RealDiameter*3.0f);
             if (i== RandomPlanetInhabited)
             {
                 PlanetAP.GetComponent<Planet>().IsPlanetInhabited = true;
@@ -243,9 +247,10 @@ public class RandomSystem : MonoBehaviour
             {
                 
                 float Dist;
-                
-               
-                Dist =PlanetAP.RealDistToUnity(RandomMoonDistanceStartPoint);
+
+                //Distances[i] = (SunPrefabPhys.UnityDiameter * SunScaleConstant) / 1.75f + RandomDistanceStartPoint * (Mathf.Exp(0.6f * (i + 1.0f))) * 10;
+
+                Dist = PlanetAP.RealDistToUnity(RandomMoonDistanceStartPoint);
                 RandomMoonDistanceStartPoint = RandomMoonDistanceStartPoint * 2;
                 if(RandomMoonDistanceStartPoint> MaxMoonDist)
                 {
@@ -264,7 +269,7 @@ public class RandomSystem : MonoBehaviour
                 else
                 {
                     //MoonAP.ThisRealMass = Random.Range(7.3e10f, 1.48e25f);
-                    MoonAP.ThisRealMass = Random.Range((float)PlanetAP.ThisRealMass / 100000.0f, (float)PlanetAP.ThisRealMass / 10000.0f);
+                    MoonAP.ThisRealMass = 1;
                 }
 
                 MoonAP.ThisSolarMass = (float)MoonAP.ThisRealMass / 1.989e+30f;
@@ -283,8 +288,8 @@ public class RandomSystem : MonoBehaviour
                 MoonAP.AddVelocity((moonangleaxis * new Vector3(0, InitMoonVelocity, 0)) + MoonVelocity);
 
                 MoonAP.ID = PlanetAP.ID + j + 1;
-                MoonAP.RealDiameter = 0.1666f * Mathf.Pow((float)MoonAP.ThisRealMass, 0.3237f);
-                MoonAP.UnityDiameter = MoonAP.RealDistToUnity(MoonAP.RealDiameter);
+                //MoonAP.RealDiameter = ; 
+                MoonAP.UnityDiameter = 0.0001431708F; //MoonAP.RealDistToUnity(MoonAP.RealDiameter);
                 Moons[j].transform.localScale = new Vector3(MoonAP.UnityDiameter * MoonScaleConstant, MoonAP.UnityDiameter * MoonScaleConstant, MoonAP.UnityDiameter * MoonScaleConstant);
                 Moons[j].transform.position = PlanetStartRotation * Moons[j].transform.position;
                 MoonAP.SetVelocity(PlanetStartRotation * MoonAP.GetVelocityUnity());
